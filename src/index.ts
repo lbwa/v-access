@@ -1,7 +1,8 @@
 import { VueConstructor } from 'vue'
 import VueRouter from 'vue-router'
 import VAccessCore from '@src/core'
-import VAccess from './components/VAccess'
+import VAccess from '@src/components/VAccess'
+import { beforeEach, afterEach } from '@src/core/guard'
 
 export default {
   install(Vue: VueConstructor, { router }: { router: VueRouter }) {
@@ -11,7 +12,7 @@ export default {
 
     Vue.component(VAccess.name, Vue.extend(VAccess))
 
-    // router beforeEach navigation guard
-    router.beforeEach((to, _, next) => {})
+    router.beforeEach(beforeEach)
+    router.afterEach(afterEach)
   }
 }
