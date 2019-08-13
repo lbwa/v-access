@@ -1,0 +1,38 @@
+{
+  "name": "v-access",
+  "version": "0.1.0",
+  "description": "An authorization solutions for Vue v2.x.",
+  "main": "dist/index.js",
+  "repository": "git@github.com:lbwa/v-access.git",
+  "author": "Bowen <asnycmode@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "cross-env NODE_ENV=development webpack-dev-server --config build/webpack.dev.js",
+    "build": "cross-env NODE_ENV=production webpack --config build/webpack.prod.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "cross-env": "^5.2.0",
+    "css-loader": "^3.1.0",
+    "dart-sass": "^1.22.6",
+    "html-webpack-plugin": "^3.2.0",
+    "prettier": "^1.18.2",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.5.3",
+    "webpack": "^4.36.1",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.7.2",
+    "webpack-merge": "^4.2.1",
+    "webpackbar": "^3.2.0"
+  },
+  "prettier": {
+    "semi": false,
+    "tabWidth": 2,
+    "printWidth": 80,
+    "singleQuote": true,
+    "trailingComma": "none"
+  }
+}
