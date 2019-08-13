@@ -1,5 +1,20 @@
-import { NavigationGuard, Route } from 'vue-router'
+import { NavigationGuard } from 'vue-router'
+import { compose } from '@src/_utils'
 
-export const beforeEach: NavigationGuard = function(to, _, next) {}
+export function createBeforeEachGuard(
+  hook: Function | Promise<any>
+): NavigationGuard {
+  return function(to, _, next) {
+    // TODO: filter is here
 
-export const afterEach: (to: Route, from: Route) => any = function(to, _) {}
+    // Run custom function
+    if (hook instanceof Promise) {
+      hook.then(next)
+    } else {
+      compose(
+        hook,
+        next
+      )(to, _)
+    }
+  }
+}
