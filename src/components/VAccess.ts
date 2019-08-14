@@ -17,16 +17,18 @@ export default {
   },
 
   render(this: Vue, h: CreateElement) {
-    const slots = this.$slots.default
+    const children = this.$slots.default
 
-    if (
-      (Array.isArray(this.access) &&
-        (this.strict
-          ? this.$_auth.strictList(this.access)
-          : this.$_auth.weakList(this.access))) ||
-      this.$_auth.has(this.access as string)
-    ) {
-      return (slots && slots[0]) || h()
+    if (Array.isArray(this.access)) {
+      return (this.strict
+      ? this.$_auth.strictList(this.access)
+      : this.$_auth.weakList(this.access))
+        ? (children && children[0]) || h()
+        : h()
+    }
+
+    if (this.$_auth.has(this.access)) {
+      return (children && children[0]) || h()
     }
     return h()
   }
