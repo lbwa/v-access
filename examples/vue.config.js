@@ -6,6 +6,17 @@ module.exports = {
     contentBase: './public'
   },
   chainWebpack(webpackConf) {
+    // path alias
     webpackConf.resolve.alias.set('@src', resolve(__dirname, '../src'))
+
+    // Enforce use examples/.eslintrc.js
+    // https://github.com/webpack-contrib/eslint-loader#defining-configfile-or-using-eslint--c-patheslintrc
+    webpackConf.module
+      .rule('eslint')
+      .use('eslint-loader')
+      .tap(options => ({
+        ...options,
+        configFile: resolve('.eslintrc.js')
+      }))
   }
 }
