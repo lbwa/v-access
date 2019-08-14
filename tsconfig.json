@@ -6,7 +6,6 @@
     "moduleResolution": "node",
     "target": "es5",
     "declaration": true,
-    "esModuleInterop": true,
     "lib": [
       "es2015",
       "dom"
