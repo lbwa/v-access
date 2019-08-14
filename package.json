@@ -2,31 +2,36 @@
   "name": "v-access",
   "version": "0.1.0",
   "description": "An authorization solutions for Vue v2.x.",
-  "main": "dist/index.js",
+  "main": "dist/v-access.min.js",
+  "types": "dist/index.d.ts",
+  "unpkg": "dist/v-access.min.js",
+  "jsdelivr": "dist/v-access.min.js",
   "repository": "git@github.com:lbwa/v-access.git",
   "author": "Bowen <asnycmode@gmail.com>",
   "license": "MIT",
-  "private": true,
+  "private": false,
+  "files": [
+    "dist"
+  ],
+  "bugs": {
+    "url": "https://github.com/lbwa/v-access/issues"
+  },
+  "homepage": "https://github.com/lbwa/v-access#readme",
   "scripts": {
-    "start": "cross-env NODE_ENV=development webpack-dev-server --config build/webpack.dev.js",
-    "build": "cross-env NODE_ENV=production webpack --config build/webpack.prod.js"
+    "clean": "rm -vrf dist/*",
+    "build": "npm run clean && npm run build:prod && npm run build:dev",
+    "build:prod": "cross-env TARGET=production rollup --config build/rollup.config.js",
+    "build:dev": "cross-env TARGET=development rollup --config build/rollup.config.js",
+    "prepublish": ""
   },
   "dependencies": {},
   "devDependencies": {
     "cross-env": "^5.2.0",
-    "css-loader": "^3.1.0",
-    "dart-sass": "^1.22.6",
-    "html-webpack-plugin": "^3.2.0",
     "prettier": "^1.18.2",
-    "sass-loader": "^7.1.0",
-    "style-loader": "^0.23.1",
-    "ts-loader": "^6.0.4",
-    "typescript": "^3.5.3",
-    "webpack": "^4.36.1",
-    "webpack-cli": "^3.3.6",
-    "webpack-dev-server": "^3.7.2",
-    "webpack-merge": "^4.2.1",
-    "webpackbar": "^3.2.0"
+    "rollup": "^1.19.4",
+    "rollup-plugin-terser": "^5.1.1",
+    "rollup-plugin-typescript2": "^0.22.1",
+    "typescript": "^3.5.3"
   },
   "prettier": {
     "semi": false,
@@ -38,5 +43,14 @@
   "peerDependencies": {
     "vue": "^2.6.10",
     "vue-router": "^3.1.2"
-  }
+  },
+  "keywords": [
+    "access-control",
+    "vue-plugins",
+    "web",
+    "typescript",
+    "vue",
+    "vue-router",
+    "authorization"
+  ]
 }
