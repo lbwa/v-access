@@ -2,7 +2,7 @@
 
 > An authorization solutions for Vue v2.x.
 
-**NOTICE:** This project is under construction。
+**NOTICE:** This project is under construction.
 
 ## Prerequisites
 

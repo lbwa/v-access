@@ -6,6 +6,7 @@
     "moduleResolution": "node",
     "target": "es5",
     "declaration": true,
+    "esModuleInterop": true,
     "lib": [
       "es2015",
       "dom"
@@ -19,7 +20,8 @@
     }
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "__tests__/**/*.ts"
   ],
   "exclude": [
     "node_modules"

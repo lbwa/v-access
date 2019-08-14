@@ -12,7 +12,7 @@ function createAccessMap(accessList: Access[]): AccessMap {
 }
 
 export default class VAccessCore {
-  private map: AccessMap
+  map: AccessMap
 
   constructor() {
     assert(

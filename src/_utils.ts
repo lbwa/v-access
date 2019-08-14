@@ -1,4 +1,5 @@
 export function assert(condition: any, msg: string) {
+  /* istanbul ignore next */
   if (!condition) throw new Error(`[V-ACCESS]: ${msg || 'Unknown error'}`)
 }
 
