@@ -3,7 +3,6 @@ export function assert(condition: boolean, msg: string) {
 }
 
 export function compose(...fns: Function[]) {
-  if (!fns.length) return (arg: any) => arg
   return (...args: any[]) =>
     fns.reduce((result, fn) => fn(...(result || [])), args)
 }
