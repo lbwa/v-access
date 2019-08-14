@@ -7,7 +7,7 @@ declare module 'vue/types/vue' {
 
     strict: boolean
 
-    $_auth: VAccessCore
+    $$auth: VAccessCore
   }
 }
 declare module 'vue-router/types/router' {
