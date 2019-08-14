@@ -1,4 +1,4 @@
-export function assert(condition: boolean, msg: string) {
+export function assert(condition: any, msg: string) {
   if (!condition) throw new Error(`[V-ACCESS]: ${msg || 'Unknown error'}`)
 }
 

@@ -1,7 +1,7 @@
 import { NavigationGuard } from 'vue-router'
 import { compose } from '@src/_utils'
 
-export function createBeforeEachGuard(
+export function composeBeforeEach(
   hook: Function | Promise<any>
 ): NavigationGuard {
   return function(to, _, next) {
