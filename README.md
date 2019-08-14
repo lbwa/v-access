@@ -19,7 +19,7 @@ npm i v-access --save
 
 ## Schema
 
-Single user access which is provided by back-end service should following structure:
+Single user access which is provided by back-end service should has following structure:
 
 ```ts
 interface Access {
@@ -55,7 +55,7 @@ fetchUserAccessList().then(({ list: userAccessList }: { list: Access[] }) =>
 
 1. Verification functions which is belong to `Vue` prototype property named `$$auth`
 
-**NOTICE:** All global components only support **ONE** children element.
+**NOTICE:** All global components only support **ONE** child element.
 
 ### Single verification
 
