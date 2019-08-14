@@ -1,5 +1,5 @@
 import Vue, { CreateElement } from 'vue'
-import { assert } from '@src/_utils'
+import { assert } from '@src/shared/_utils'
 
 export default {
   name: 'VAccess',
