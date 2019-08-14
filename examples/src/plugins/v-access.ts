@@ -1,4 +1,6 @@
 import Vue from 'vue'
-import PluginVAccess from '../../../src/index'
+import PluginVAccess from '@src/index'
+import router from '@/router'
 
-Vue.use(PluginVAccess)
+// vue-router instance is required
+Vue.use(PluginVAccess, { router })

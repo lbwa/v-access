@@ -1,7 +1,9 @@
 <template>
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+    <v-access access="test">
+      <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+    </v-access>
   </div>
 </template>
 
@@ -13,6 +15,10 @@ export default Vue.extend({
   name: 'home',
   components: {
     HelloWorld
+  },
+
+  created() {
+    this.$$auth.init([{ id: 'test' }])
   }
 })
 </script>
