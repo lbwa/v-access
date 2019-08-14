@@ -1,5 +1,5 @@
-import { Access, AccessMap } from '@src/shared/types'
-import { assert } from '@src/_utils'
+import { Access, AccessMap, RouteWithAccess } from '@src/shared/types'
+import { assert } from '@src/shared/_utils'
 
 function createAccessMap(accessList: Access[]): AccessMap {
   return accessList.reduce(
@@ -12,29 +12,40 @@ function createAccessMap(accessList: Access[]): AccessMap {
 }
 
 export default class VAccessCore {
-  map: AccessMap
+  map: AccessMap = {}
+  created: boolean = false
 
   constructor() {
     assert(
       this instanceof VAccessCore,
       'VAccess is a constructor and should be called with the `new` keyword'
     )
-    this.map = {}
   }
 
   init(accessList: Access[]) {
     this.map = createAccessMap(accessList)
+    this.created = true
   }
 
-  has = (accessId: string) => {
+  has(accessId: string) {
     return !!this.map[accessId]
   }
 
+  weak(accessIdList: string[]) {
+    return accessIdList.some(this.has.bind(this))
+  }
+
+  strict(accessIdList: string[]) {
+    return accessIdList.every(this.has.bind(this))
+  }
+
   weakList(accessIdList: string[]) {
-    return accessIdList.some(this.has)
+    return this.weak(accessIdList)
   }
 
   strictList(accessIdList: string[]) {
-    return accessIdList.every(this.has)
+    return this.strict(accessIdList)
   }
+
+  createPrivateRoutes(pendingRoutes: RouteWithAccess[]) {}
 }
