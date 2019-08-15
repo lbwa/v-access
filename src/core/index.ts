@@ -1,5 +1,5 @@
 import { Access, AccessMap, RouteWithAccess } from '@src/shared/types'
-import { assert } from '@src/shared/_utils'
+import { assert, readObjectSize } from '@src/shared/_utils'
 
 function createAccessMap(accessList: Access[]): AccessMap {
   return accessList.reduce(
@@ -14,6 +14,7 @@ function createAccessMap(accessList: Access[]): AccessMap {
 export default class VAccessCore {
   map: AccessMap = {}
   created: boolean = false
+  size: number = readObjectSize(this.map)
 
   constructor() {
     assert(
@@ -24,7 +25,13 @@ export default class VAccessCore {
 
   init(accessList: Access[]) {
     this.map = createAccessMap(accessList)
+    this.size = readObjectSize(this.map)
     this.created = true
+  }
+
+  reset() {
+    this.map = {}
+    this.created = false
   }
 
   has(accessId: string) {
@@ -47,5 +54,29 @@ export default class VAccessCore {
     return this.strict(accessIdList)
   }
 
-  createPrivateRoutes(pendingRoutes: RouteWithAccess[]) {}
+  private createPrivateRoutes(pendingRoutes: RouteWithAccess[]) {
+    return pendingRoutes.reduce((result: RouteWithAccess[], route) => {
+      const routeShallow = { ...route }
+      if (this.verifyRouteAccess(routeShallow)) {
+        if (routeShallow.children) {
+          routeShallow.children = this.createPrivateRoutes(
+            routeShallow.children
+          )
+        }
+
+        if (!(routeShallow.children && !routeShallow.children.length)) {
+          result.push(routeShallow)
+        }
+      }
+      return result
+    }, [])
+  }
+
+  private verifyRouteAccess(route: RouteWithAccess) {
+    const { meta } = route
+    if (meta && meta.access) {
+      return meta.access.every(this.has.bind(this))
+    }
+    return true
+  }
 }

@@ -1,4 +1,4 @@
-import { RouterOptions } from 'vue-router'
+import { RouterOptions, RouteConfig } from 'vue-router'
 import VAccessCore from '@src/core'
 
 declare module 'vue/types/vue' {
@@ -24,3 +24,13 @@ export interface Access {
 export interface AccessMap {
   [mapKey: string]: Access
 }
+
+export interface RouteWithAccess extends RouteConfig {
+  children?: RouteWithAccess[]
+  meta: {
+    access: string[]
+    [metaKey: string]: any
+  }
+}
+
+export type UserGuard<T> = Function | Promise<T>

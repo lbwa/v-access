@@ -7,3 +7,7 @@ export function compose(...fns: Function[]) {
   return (...args: any[]) =>
     fns.reduce((result, fn) => fn(...(result || [])), args)
 }
+
+export function readObjectSize(obj: { [key: string]: any }) {
+  return Object.keys(obj).length
+}
