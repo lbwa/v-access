@@ -78,6 +78,9 @@ export default class VAccessCore {
     if (meta && meta.access) {
       return meta.access.every(this.has.bind(this))
     }
+    if (meta && meta.weakAccess) {
+      return meta.weakAccess.some(this.has.bind(this))
+    }
     return true
   }
 }
