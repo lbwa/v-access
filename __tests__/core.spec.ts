@@ -1,6 +1,6 @@
 import VAccessCore from '@src/core'
 
-describe('Instantiation', () => {
+describe('VAccessCore', () => {
   const auth = new VAccessCore()
   const ACCESS_LIST = [
     {
@@ -17,7 +17,13 @@ describe('Instantiation', () => {
   it("With 'new' keyword", () => {
     expect(auth.has).toBeDefined()
     expect(auth.init).toBeDefined()
+    expect(auth.reset).toBeDefined()
+    expect(auth.strict).toBeDefined()
     expect(auth.strictList).toBeDefined()
+    expect(auth.weak).toBeDefined()
+    expect(auth.weakList).toBeDefined()
+    expect(auth.createPrivateRoutes).toBeDefined()
+    expect(auth.verifyRouteAccess).toBeDefined()
   })
 
   it('Init with access list', () => {
@@ -32,13 +38,28 @@ describe('Instantiation', () => {
   })
 
   it('Has AT LEAST ONE access', () => {
-    expect(auth.weakList(['accessOne', 'accessFour'])).toBeTruthy()
-    expect(auth.weakList(['accessOne', 'accessFive'])).toBeTruthy()
+    const PENDING_LIST_TRUTHY = [
+      ['accessOne', 'accessFour'],
+      ['accessOne', 'accessFive']
+    ]
+    const PENDING_FALSY = ['accessFour', 'accessFive']
+    for (const pending of PENDING_LIST_TRUTHY) {
+      expect(auth.weak(pending)).toBeTruthy()
+      expect(auth.weakList(pending)).toBeTruthy()
+    }
+    expect(auth.weak(PENDING_FALSY)).toBeFalsy()
+    expect(auth.weakList(PENDING_FALSY)).toBeFalsy()
   })
 
   it('Has ALL access', () => {
-    expect(auth.strictList(['accessOne', 'accessTwo'])).toBeTruthy()
-    expect(auth.strictList(['accessOne', 'accessFour'])).toBeFalsy()
-    expect(auth.strictList(['accessOne', 'accessFive'])).toBeFalsy()
+    const PENDING_LIST_TRUTHY = [['accessOne', 'accessTwo']]
+    const PENDING_FALSY = ['accessOne', 'accessFour']
+
+    for (const pending of PENDING_LIST_TRUTHY) {
+      expect(auth.strict(pending)).toBeTruthy()
+      expect(auth.strictList(pending)).toBeTruthy()
+    }
+    expect(auth.strict(PENDING_FALSY)).toBeFalsy()
+    expect(auth.strictList(PENDING_FALSY)).toBeFalsy()
   })
 })
