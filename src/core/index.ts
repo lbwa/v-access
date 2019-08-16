@@ -32,6 +32,7 @@ export default class VAccessCore {
   reset() {
     this.map = {}
     this.created = false
+    this.size = 0
   }
 
   has(accessId: string) {
@@ -54,7 +55,7 @@ export default class VAccessCore {
     return this.strict(accessIdList)
   }
 
-  private createPrivateRoutes(pendingRoutes: RouteWithAccess[]) {
+  createPrivateRoutes(pendingRoutes: RouteWithAccess[]) {
     return pendingRoutes.reduce((result: RouteWithAccess[], route) => {
       const routeShallow = { ...route }
       if (this.verifyRouteAccess(routeShallow)) {
@@ -72,7 +73,7 @@ export default class VAccessCore {
     }, [])
   }
 
-  private verifyRouteAccess(route: RouteWithAccess) {
+  verifyRouteAccess(route: RouteWithAccess) {
     const { meta } = route
     if (meta && meta.access) {
       return meta.access.every(this.has.bind(this))

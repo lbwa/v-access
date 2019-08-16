@@ -1,36 +1,52 @@
 import { VueConstructor } from 'vue'
-import VueRouter, { NavigationGuard, Route } from 'vue-router'
+import VueRouter, { NavigationGuard } from 'vue-router'
 import VAccessCore from '@src/core'
 import component from '@src/components/VAccess'
 import { composeBeforeEach } from '@src/core/guard'
-import { assert } from './_utils'
+import { assert } from './shared/_utils'
+import { RouteWithAccess } from './shared/types'
 
-type BeforeEachHook = NavigationGuard | Promise<any>
+export type NextParameters = (Parameters<(Parameters<NavigationGuard>)[2]>)[0]
+export type BeforeEachHook = NavigationGuard | Promise<NextParameters>
 
 interface VAccessOptions {
   router: VueRouter
-  beforeEach: BeforeEachHook
-  afterEach: (to: Route, from: Route) => any
+  routes?: RouteWithAccess[]
+  redirect?: string
+  beforeEach?: BeforeEachHook
+  afterEach?: (Parameters<VueRouter['afterEach']>)[0]
 }
 
 export default {
   install(
     Vue: VueConstructor,
-    { router, beforeEach, afterEach }: VAccessOptions = {} as VAccessOptions
+    {
+      router,
+      routes = [],
+      redirect = '/', // TODO: create a default redirect page, $$unauthorized
+      beforeEach,
+      afterEach
+    }: VAccessOptions = {} as VAccessOptions
   ) {
-    const authClient = new VAccessCore()
+    const auth = new VAccessCore()
     // use this.$$auth.set() to pass accessList
     Object.defineProperty(Vue.prototype, '$$auth', {
-      value: authClient
+      enumerable: true,
+      value: auth
     })
 
     Vue.component(component.name, Vue.extend(component))
 
     assert(
-      !!router,
+      router,
       'You need provide vue-router instance to create router filter.'
     )
-    beforeEach && router.beforeEach(composeBeforeEach(beforeEach))
+    routes &&
+      router.beforeEach(
+        composeBeforeEach({ router, routes, auth, redirect })(
+          beforeEach || (() => {})
+        )
+      )
     afterEach && router.afterEach(afterEach)
   }
 }

@@ -7,7 +7,7 @@ declare module 'vue/types/vue' {
 
     strict: boolean
 
-    $$auth: VAccessCore
+    readonly $$auth: VAccessCore
   }
 }
 declare module 'vue-router/types/router' {
@@ -17,17 +17,17 @@ declare module 'vue-router/types/router' {
 }
 
 export interface Access {
-  id: string
-  [accessKey: string]: any
+  readonly id: string
+  readonly [accessKey: string]: any
 }
 
 export interface AccessMap {
-  [mapKey: string]: Access
+  readonly [mapKey: string]: Access
 }
 
 export interface RouteWithAccess extends RouteConfig {
-  children?: RouteWithAccess[]
-  meta: {
+  readonly children?: RouteWithAccess[]
+  readonly meta: {
     access: string[]
     [metaKey: string]: any
   }
