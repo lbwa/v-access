@@ -13,7 +13,11 @@ module.exports = {
 
   testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[tj]s?(x)'],
 
-  testPathIgnorePatterns: ['\\\\node_modules\\\\', '\\\\examples\\\\'],
+  testPathIgnorePatterns: [
+    '\\\\node_modules\\\\',
+    '\\\\examples\\\\',
+    '\\\\dist\\\\'
+  ],
 
   moduleNameMapper: {
     '@src/(.*)': '<rootDir>/src/$1'
