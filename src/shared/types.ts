@@ -27,8 +27,8 @@ export interface AccessMap {
 
 export interface RouteWithAccess extends RouteConfig {
   readonly children?: RouteWithAccess[]
-  readonly meta: {
-    access: string[]
+  readonly meta?: {
+    access?: string[]
     [metaKey: string]: any
   }
 }
