@@ -24,6 +24,7 @@ export default class VAccessCore {
   }
 
   init(accessList: Access[]) {
+    if (this.created) return
     this.map = createAccessMap(accessList)
     this.size = readObjectSize(this.map)
     this.created = true
