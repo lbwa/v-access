@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "description": "An authorization solutions for Vue v2.x.",
   "main": "dist/v-access.min.js",
-  "types": "dist/index.d.ts",
+  "module": "dist/v-access.esm.js",
+  "types": "dist/src/index.d.ts",
   "unpkg": "dist/v-access.min.js",
   "jsdelivr": "dist/v-access.min.js",
   "repository": "git@github.com:lbwa/v-access.git",
@@ -19,9 +20,9 @@
   "homepage": "https://github.com/lbwa/v-access#readme",
   "scripts": {
     "clean": "rm -vrf dist/*",
-    "build": "npm run clean && npm run build:prod && npm run build:dev",
-    "build:prod": "cross-env TARGET=production rollup --config build/rollup.config.js",
-    "build:dev": "cross-env TARGET=development rollup --config build/rollup.config.js",
+    "build": "npm run clean && npm run build:umd && npm run build:es",
+    "build:umd": "cross-env TARGET=umd rollup --config build/rollup.config.js",
+    "build:es": "cross-env TARGET=es rollup --config build/rollup.config.js",
     "test": "jest --coverage"
   },
   "dependencies": {},

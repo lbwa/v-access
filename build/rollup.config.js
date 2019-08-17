@@ -12,46 +12,43 @@ const banner = `/*!
   */`
 
 const build = {
-  development: {
-    input: resolve('src/index.ts'),
-    output: resolve('dist/v-access.js'),
-    format: 'umd',
-    env: 'development',
-    banner,
-    plugins: []
+  es: {
+    output: resolve('dist/v-access.esm.js'),
+    format: 'es'
   },
 
-  production: {
-    input: resolve('src/index.ts'),
+  umd: {
     output: resolve('dist/v-access.min.js'),
-    format: 'umd',
-    env: 'production',
-    banner,
-    plugins: [
-      terser({
-        output: {
-          comments: /^!/
-        }
-      })
-    ]
+    format: 'umd'
   }
 }
 
 function createConfig(opts) {
   const options = build[opts]
   const config = {
-    input: options.input,
+    input: resolve('src/index.ts'),
     output: {
       file: options.output,
       format: options.format,
-      banner: options.banner,
+      banner,
       name: 'VAccess' // global name in window
     },
     plugins: [
       typescript({
         clean: true
       }),
-      ...options.plugins
+      terser({
+        output: {
+          comments: function(node, comment) {
+            const text = comment.value
+            const type = comment.type
+            if (type == 'comment2') {
+              // multiline comment
+              return /@preserve|@license|@cc_on/i.test(text)
+            }
+          }
+        }
+      })
     ]
   }
 
