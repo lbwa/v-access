@@ -2,8 +2,6 @@
 
 > An authorization solutions for Vue v2.x, including **elements** control and **routes** control.
 
-## Prerequisites
-
 |                   Peer dependencies                    | Required |
 | :----------------------------------------------------: | :------: |
 |        [vue](https://www.npmjs.com/package/vue)        |    ✔️    |
@@ -130,7 +128,7 @@ If you want to implement routes access control based on `vue-router`, your shoul
 | :--------: | :------: | :---------------------------------: | :-----------------------------------: |
 |   router   |    ✔️    |              VueRouter              |        A `vue-router` instance        |
 |   routes   |    ✔️    | Array<[RouteConfig][route-config]>  | preset routes list for access control |
-|  redirect  |    -     |               string                |   redirect with unauthorized access   |
+|  redirect  |    -     |               string                |    Occurred by unauthorized access    |
 | beforeEach |    -     | [NavigationGuard][navigation-guard] | Same as `vue-router` beforeEach guard |
 | afterEach  |    -     |      [After hook][after-hook]       | Same as `vue-router` afterEach guard  |
 

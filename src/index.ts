@@ -1,7 +1,7 @@
 import { VueConstructor } from 'vue'
 import VueRouter, { NavigationGuard } from 'vue-router'
 import VAccessCore from '@src/core'
-import component from '@src/components/VAccess'
+import VAccessComponent from '@src/components/VAccess'
 import { composeBeforeEach } from '@src/core/guard'
 import { assert } from './shared/_utils'
 import { RouteWithAccess } from './shared/types'
@@ -35,7 +35,8 @@ export default {
       value: auth
     })
 
-    Vue.component(component.name, Vue.extend(component))
+    const component = VAccessComponent(Vue)
+    Vue.component(component.name, component)
 
     assert(
       router,

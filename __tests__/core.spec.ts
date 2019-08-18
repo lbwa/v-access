@@ -29,6 +29,12 @@ describe('VAccessCore', () => {
     expect(Object.keys(auth.map).length).toBe(ACCESS_LIST.length)
   })
 
+  it('Prevent multiple initialization', () => {
+    auth.init([ACCESS_LIST[0]])
+    expect(auth.map).toBeDefined()
+    expect(Object.keys(auth.map).length).toBe(ACCESS_LIST.length)
+  })
+
   it('Has ONE access', () => {
     expect(auth.has(ACCESS_LIST[1].id)).toBeTruthy()
     expect(auth.has('mongo.read')).toBeFalsy()

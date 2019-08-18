@@ -1,18 +1,9 @@
-import { RouterOptions, RouteConfig } from 'vue-router'
+import { RouteConfig } from 'vue-router'
 import VAccessCore from '@src/core'
 
 declare module 'vue/types/vue' {
   interface Vue {
-    access: string[] | string
-
-    strict: boolean
-
     readonly $$auth: VAccessCore
-  }
-}
-declare module 'vue-router/types/router' {
-  interface VueRouter {
-    options: RouterOptions
   }
 }
 
