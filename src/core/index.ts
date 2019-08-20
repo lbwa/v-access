@@ -1,5 +1,5 @@
-import { Access, AccessMap, RouteWithAccess } from '@src/shared/types'
-import { assert, readObjectSize } from '@src/shared/_utils'
+import { Access, AccessMap, RouteWithAccess } from '../shared/types'
+import { assert, readObjectSize } from '../shared/_utils'
 
 function createAccessMap(accessList: Access[]): AccessMap {
   return accessList.reduce(

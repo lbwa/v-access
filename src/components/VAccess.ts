@@ -1,5 +1,5 @@
 import { CreateElement, VueConstructor } from 'vue'
-import { assert } from '@src/shared/_utils'
+import { assert } from '../shared/_utils'
 
 export default function VAccessComponent(Vue: VueConstructor) {
   return Vue.extend({

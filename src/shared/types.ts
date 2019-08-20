@@ -1,5 +1,5 @@
 import { RouteConfig } from 'vue-router'
-import VAccessCore from '@src/core'
+import VAccessCore from '../core'
 
 declare module 'vue/types/vue' {
   interface Vue {

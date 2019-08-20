@@ -1,7 +1,7 @@
 import VueRouter, { NavigationGuard } from 'vue-router'
-import { compose } from '@src/shared/_utils'
+import { compose } from '../shared/_utils'
 import VAccessCore from '.'
-import { RouteWithAccess } from '@src/shared/types'
+import { RouteWithAccess } from '../shared/types'
 import { NextParameters } from '..'
 
 interface ComposeOptions {

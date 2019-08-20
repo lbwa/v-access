@@ -1,4 +1,4 @@
-import VAccessCore from '@src/core'
+import VAccessCore from 'src/core'
 
 describe('VAccessCore', () => {
   const auth = new VAccessCore()

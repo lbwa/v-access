@@ -1,8 +1,8 @@
 import { VueConstructor } from 'vue'
 import VueRouter, { NavigationGuard } from 'vue-router'
-import VAccessCore from '@src/core'
-import VAccessComponent from '@src/components/VAccess'
-import { composeBeforeEach } from '@src/core/guard'
+import VAccessCore from './core'
+import VAccessComponent from './components/VAccess'
+import { composeBeforeEach } from './core/guard'
 import { assert } from './shared/_utils'
 import { RouteWithAccess } from './shared/types'
 

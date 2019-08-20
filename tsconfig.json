@@ -11,12 +11,7 @@
       "dom"
     ],
     "strict": true,
-    "baseUrl": "./",
-    "paths": {
-      "@src/*": [
-        "src/*"
-      ]
-    }
+    "baseUrl": "./"
   },
   "include": [
     "src/**/*.ts",
