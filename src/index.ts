@@ -35,8 +35,7 @@ export default {
       value: auth
     })
 
-    const component = VAccessComponent(Vue)
-    Vue.component(component.name, component)
+    Vue.component('VAccess', VAccessComponent(Vue))
 
     assert(
       router,
