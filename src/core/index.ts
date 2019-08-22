@@ -1,5 +1,6 @@
+import VueRouter from 'vue-router'
 import { Access, AccessMap, RouteWithAccess } from '../shared/types'
-import { assert, readObjectSize } from '../shared/_utils'
+import { assert, readObjectSize, log } from '../shared/_utils'
 
 function createAccessMap(accessList: Access[]): AccessMap {
   return accessList.reduce(
@@ -12,28 +13,34 @@ function createAccessMap(accessList: Access[]): AccessMap {
 }
 
 export default class VAccessCore {
+  private presetRoutes: RouteWithAccess[]
+  private router: VueRouter
   map: AccessMap = {}
   created: boolean = false
-  size: number = readObjectSize(this.map)
 
-  constructor() {
+  constructor(router: VueRouter, routes: RouteWithAccess[]) {
     assert(
       this instanceof VAccessCore,
       'VAccess is a constructor and should be called with the `new` keyword'
     )
+    this.presetRoutes = routes
+    this.router = router
   }
 
   init(accessList: Access[]) {
     if (this.created) return
     this.map = createAccessMap(accessList)
-    this.size = readObjectSize(this.map)
+
+    const privateRoutes = this.createPrivateRoutes(this.presetRoutes)
+    log('Private routes', privateRoutes)
+    this.router.addRoutes(privateRoutes)
+
     this.created = true
   }
 
   reset() {
     this.map = {}
     this.created = false
-    this.size = 0
   }
 
   has(accessId: string) {

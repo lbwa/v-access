@@ -1,26 +1,17 @@
 import VueRouter, { NavigationGuard } from 'vue-router'
-import { compose } from '../shared/_utils'
+import { compose, log } from '../shared/_utils'
 import VAccessCore from '.'
 import { RouteWithAccess } from '../shared/types'
 import { NextParameters } from '..'
 
 interface ComposeOptions {
-  router: VueRouter
-  routes: RouteWithAccess[]
   auth: VAccessCore
   redirect: string
 }
 
-export function composeBeforeEach({
-  router,
-  routes,
-  auth,
-  redirect
-}: ComposeOptions) {
+export function composeBeforeEach({ auth, redirect }: ComposeOptions) {
   return (hook: Function | Promise<NextParameters>): NavigationGuard => {
-    let hasRoutesAdded = false
     const whiteList = [redirect]
-    const privateRoutes: RouteWithAccess[] = auth.createPrivateRoutes(routes)
 
     return function(to, _, next) {
       if (whiteList.includes(to.path)) return next()
@@ -33,17 +24,13 @@ export function composeBeforeEach({
         return next(redirect)
       }
 
-      if (!hasRoutesAdded && privateRoutes.length) {
-        router.addRoutes(privateRoutes)
-        hasRoutesAdded = true
-      }
-
       if (!auth.verifyRouteAccess(to as RouteWithAccess)) {
         return next(redirect)
       }
 
       // Run custom function and ensure next function calling
       if (hook instanceof Promise) {
+        debugger
         hook.then(next)
       } else {
         compose(
