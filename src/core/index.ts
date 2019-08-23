@@ -1,6 +1,6 @@
-import VueRouter from 'vue-router'
+import VueRouter, { RouterOptions } from 'vue-router'
 import { Access, AccessMap, RouteWithAccess } from '../shared/types'
-import { assert, readObjectSize, log } from '../shared/_utils'
+import { assert, log } from '../shared/_utils'
 
 function createAccessMap(accessList: Access[]): AccessMap {
   return accessList.reduce(
@@ -13,8 +13,9 @@ function createAccessMap(accessList: Access[]): AccessMap {
 }
 
 export default class VAccessCore {
-  private presetRoutes: RouteWithAccess[]
   private router: VueRouter
+  private routerOptions: RouterOptions
+  private pendingRoutes: RouteWithAccess[]
   map: AccessMap = {}
   created: boolean = false
 
@@ -23,17 +24,20 @@ export default class VAccessCore {
       this instanceof VAccessCore,
       'VAccess is a constructor and should be called with the `new` keyword'
     )
-    this.presetRoutes = routes
     this.router = router
+    this.routerOptions = router.options
+    this.pendingRoutes = routes
   }
 
   init(accessList: Access[]) {
     if (this.created) return
     this.map = createAccessMap(accessList)
 
-    const privateRoutes = this.createPrivateRoutes(this.presetRoutes)
-    log('Private routes', privateRoutes)
-    this.router.addRoutes(privateRoutes)
+    if (this.router && this.pendingRoutes) {
+      const privateRoutes = this.createPrivateRoutes(this.pendingRoutes)
+      this.router.addRoutes(privateRoutes)
+      log('Private routes', privateRoutes)
+    }
 
     this.created = true
   }
@@ -41,6 +45,14 @@ export default class VAccessCore {
   reset() {
     this.map = {}
     this.created = false
+
+    /**
+     * @description to implement addRoutes resetting
+     * @ref https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
+     */
+    this.router.matcher = new VueRouter(
+      Object.assign({}, this.routerOptions)
+    ).matcher
   }
 
   has(accessId: string) {
