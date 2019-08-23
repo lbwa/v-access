@@ -31,8 +31,12 @@ function createConfig(opts) {
       file: options.output,
       format: options.format,
       banner,
-      name: 'VAccess' // global name in window
+      name: 'VAccess', // global name in window
+      globals: {
+        'vue-router': 'VueRouter' // Only for umd format
+      }
     },
+    external: ['vue-router'], // For ES module format
     plugins: [
       typescript({
         clean: true
