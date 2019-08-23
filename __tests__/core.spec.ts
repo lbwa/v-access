@@ -1,7 +1,11 @@
+import VueRouter from 'vue-router'
 import VAccessCore from 'src/core'
+import { RouteWithAccess } from 'src/shared/types'
 
 describe('VAccessCore', () => {
-  const auth = new VAccessCore()
+  const pendingRoutes: RouteWithAccess[] = []
+  const router = new VueRouter()
+  const auth = new VAccessCore(router, pendingRoutes)
   const ACCESS_LIST = [
     {
       id: 'home.read'
@@ -206,6 +210,5 @@ describe('VAccessCore', () => {
     auth.reset()
     expect(auth.map).toEqual({})
     expect(auth.created).toBe(false)
-    expect(auth.size).toBe(0)
   })
 })

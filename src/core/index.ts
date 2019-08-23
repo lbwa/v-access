@@ -25,7 +25,7 @@ export default class VAccessCore {
       'VAccess is a constructor and should be called with the `new` keyword'
     )
     this.router = router
-    this.routerOptions = router.options
+    this.routerOptions = router.options || {}
     this.pendingRoutes = routes
   }
 
