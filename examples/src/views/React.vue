@@ -1,19 +1,18 @@
 <template>
-  <v-access access="react.read">
-    <AccessInfo />
-  </v-access>
+  <AccessInfo />
 </template>
 
 <script lang="ts">
+import Vue from 'vue'
 import AccessInfo from '../components/AccessInfo.vue'
 
-import Vue from 'vue'
-
 export default Vue.extend({
-  name: 'home',
+  name: 'RouteNamedReact',
 
   components: {
     AccessInfo
   }
 })
 </script>
+
+<style lang="sass" scoped></style>
