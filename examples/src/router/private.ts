@@ -25,5 +25,9 @@ export default [
     meta: {
       weakAccess: ['vue.write', 'react.read']
     }
+  },
+  {
+    path: '*',
+    redirect: '/404'
   }
 ]

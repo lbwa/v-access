@@ -13,6 +13,22 @@ export default new Router({
       // which is lazy-loaded when the route is visited.
       component: () =>
         import(/* webpackChunkName: 'route-home' */ '@/views/Home.vue')
+    },
+    {
+      path: '/401',
+      name: 'Unauthorized',
+      component: () =>
+        import(
+          /* webpackChunkName: 'route-unauthorized' */ '@/views/Error/401.vue'
+        )
+    },
+    {
+      path: '/404',
+      name: 'NotFound',
+      component: () =>
+        import(
+          /* webpackChunkName: 'route-not-found' */ '@/views/Error/404.vue'
+        )
     }
   ]
 })

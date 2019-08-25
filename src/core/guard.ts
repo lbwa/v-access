@@ -1,5 +1,5 @@
-import VueRouter, { NavigationGuard } from 'vue-router'
-import { compose, log } from '../shared/_utils'
+import { NavigationGuard } from 'vue-router'
+import { compose } from '../shared/_utils'
 import VAccessCore from '.'
 import { RouteWithAccess } from '../shared/types'
 import { NextParameters } from '..'

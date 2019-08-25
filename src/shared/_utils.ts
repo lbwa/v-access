@@ -6,10 +6,6 @@ export function compose(...fns: Function[]) {
     fns.reduce((result, fn) => fn(...(result || [])), args)
 }
 
-export function readObjectSize(obj: { [key: string]: any }) {
-  return Object.keys(obj).length
-}
-
 export let log = noop
 export let assert = noop
 

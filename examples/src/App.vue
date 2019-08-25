@@ -2,6 +2,7 @@
   <div id="app">
     <nav id="nav">
       <router-link to="/">Home</router-link> |
+      <router-link to="/vue">Vue.read</router-link> |
       <router-link to="/react">React.read</router-link> |
       <router-link to="/mongo">Optional access</router-link>
     </nav>
