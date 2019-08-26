@@ -6,17 +6,13 @@
     "moduleResolution": "node",
     "target": "es5",
     "declaration": true,
+    "esModuleInterop": true,
     "lib": [
       "es2015",
       "dom"
     ],
     "strict": true,
-    "baseUrl": "./",
-    "paths": {
-      "@src/*": [
-        "src/*"
-      ]
-    }
+    "baseUrl": "./"
   },
   "include": [
     "src/**/*.ts",

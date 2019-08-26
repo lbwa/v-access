@@ -1,9 +1,26 @@
 import { RouteConfig } from 'vue-router'
-import VAccessCore from '@src/core'
+import VAccessCore from '../core'
 
 declare module 'vue/types/vue' {
   interface Vue {
     readonly $$auth: VAccessCore
+  }
+}
+
+declare module 'vue-router/types/router' {
+  interface VueRouter {
+    options: any
+
+    // https://github.com/vuejs/vue-router/blob/v3.1.2/src/create-matcher.js#L11-L14
+    // matcher: {
+    //   match: (
+    //     raw: RawLocation,
+    //     current?: Route,
+    //     redirectedFrom?: Location
+    //   ) => Route
+    //   addRoutes: (routes: RouteConfig[]) => void
+    // }
+    matcher: any
   }
 }
 
@@ -13,13 +30,14 @@ export interface Access {
 }
 
 export interface AccessMap {
-  readonly [mapKey: string]: Access
+  readonly [accessIdKey: string]: Access
 }
 
 export interface RouteWithAccess extends RouteConfig {
   readonly children?: RouteWithAccess[]
   readonly meta?: {
     access?: string[]
+    weakAccess?: string[]
     [metaKey: string]: any
   }
 }

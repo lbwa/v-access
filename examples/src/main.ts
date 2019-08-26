@@ -6,6 +6,7 @@ import '@/plugins/v-access'
 Vue.config.productionTip = false
 
 new Vue({
+  // Option router will trigger vue-router injection
   router,
   render: h => h(App)
 }).$mount('#app')

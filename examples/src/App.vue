@@ -1,12 +1,37 @@
 <template>
   <div id="app">
-    <div id="nav">
+    <nav id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+      <router-link to="/vue">Vue.read</router-link> |
+      <router-link to="/react">React.read</router-link> |
+      <router-link to="/mongo">Optional access</router-link>
+    </nav>
     <router-view />
+    <section>
+      <label>Current access:&nbsp;</label>
+      <span>{{ JSON.stringify(Object.keys($$auth.map)) }}</span>
+    </section>
   </div>
 </template>
+
+<script lang="ts">
+import Vue from 'vue'
+import { fetchUserAccess } from './api'
+
+export default Vue.extend({
+  name: 'AppEntry',
+
+  async beforeCreate() {
+    try {
+      const { list } = await fetchUserAccess()
+      this.$$auth.init(list)
+    } catch (err) {
+      /* eslint-disable-next-line */
+      console.error(err.message || err)
+    }
+  }
+})
+</script>
 
 <style lang="scss">
 #app {
@@ -22,7 +47,7 @@
     font-weight: bold;
     color: #2c3e50;
     &.router-link-exact-active {
-      color: #42b983;
+      color: #61dafb;
     }
   }
 }

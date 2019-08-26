@@ -1,6 +1,25 @@
 <h1 align="center">v-access</h1>
 
+<p align="center">
+  <a href="https://www.npmjs.com/package/v-access">
+    <img alt="npm bundle size" src="https://img.shields.io/bundlephobia/minzip/v-access?logo=webpack&style=flat-square">
+  </a>
+  <a href="https://www.npmjs.com/package/v-access">
+    <img alt="npm" src="https://img.shields.io/npm/dt/v-access?logo=Vue.js&style=flat-square">
+  </a>
+  <a href="https://www.npmjs.com/package/v-access">
+    <img alt="npm" src="https://img.shields.io/npm/v/v-access?logo=npm&style=flat-square">
+  </a>
+  <a href="https://www.npmjs.com/package/v-access">
+    <img alt="npm type definitions" src="https://img.shields.io/npm/types/v-access?logo=typescript&style=flat-square">
+  </a>
+</p>
+
 > An authorization solutions for Vue v2.x, including **elements** control and **routes** control.
+
+<p align="center">
+  <a href="./README.CN.md">中文指南</a>
+</p>
 
 |                   Peer dependencies                    | Required |
 | :----------------------------------------------------: | :------: |

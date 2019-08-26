@@ -1,13 +1,14 @@
 import { VueConstructor } from 'vue'
 import VueRouter, { NavigationGuard } from 'vue-router'
-import VAccessCore from '@src/core'
-import VAccessComponent from '@src/components/VAccess'
-import { composeBeforeEach } from '@src/core/guard'
+import VAccessCore from './core'
+import VAccessComponent from './components/VAccess'
+import { composeBeforeEach } from './core/guard'
 import { assert } from './shared/_utils'
 import { RouteWithAccess } from './shared/types'
 
 export type NextParameters = (Parameters<(Parameters<NavigationGuard>)[2]>)[0]
 export type BeforeEachHook = NavigationGuard | Promise<NextParameters>
+export declare const VAccess: VAccessCore
 
 interface VAccessOptions {
   router: VueRouter
@@ -28,15 +29,12 @@ export default {
       afterEach
     }: VAccessOptions = {} as VAccessOptions
   ) {
-    const auth = new VAccessCore()
-    // use this.$$auth.set() to pass accessList
-    Object.defineProperty(Vue.prototype, '$$auth', {
-      enumerable: true,
-      value: auth
-    })
+    const auth = new VAccessCore(router, routes)
 
-    const component = VAccessComponent(Vue)
-    Vue.component(component.name, component)
+      // use this.$$auth.init() to pass accessList
+    ;(Vue as any).util.defineReactive(Vue.prototype, '$$auth', auth)
+
+    Vue.component('VAccess', VAccessComponent(Vue))
 
     assert(
       router,
@@ -44,9 +42,7 @@ export default {
     )
     routes &&
       router.beforeEach(
-        composeBeforeEach({ router, routes, auth, redirect })(
-          beforeEach || (() => {})
-        )
+        composeBeforeEach({ auth, redirect })(beforeEach || (() => {}))
       )
     afterEach && router.afterEach(afterEach)
   }
