@@ -1,8 +1,7 @@
 import { NavigationGuard } from 'vue-router'
 import { compose } from '../shared/_utils'
 import VAccessCore from '.'
-import { RouteWithAccess } from '../shared/types'
-import { NextParameters } from '..'
+import { RouteWithAccess, NextParameters } from '../shared/types'
 
 interface ComposeOptions {
   auth: VAccessCore

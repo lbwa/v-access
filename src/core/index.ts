@@ -1,6 +1,12 @@
 import VueRouter, { RouterOptions } from 'vue-router'
-import { Access, AccessMap, RouteWithAccess } from '../shared/types'
+import {
+  Access,
+  AccessMap,
+  RouteWithAccess,
+  VAccessOptions
+} from '../shared/types'
 import { assert, log } from '../shared/_utils'
+import { VueConstructor } from 'vue'
 
 function createAccessMap(accessList: Access[]): AccessMap {
   return accessList.reduce(
@@ -13,6 +19,8 @@ function createAccessMap(accessList: Access[]): AccessMap {
 }
 
 export default class VAccessCore {
+  static install: (Vue: VueConstructor, VAccessOptions: VAccessOptions) => void
+
   private router: VueRouter
   private routerOptions: RouterOptions
   private pendingRoutes: RouteWithAccess[]
