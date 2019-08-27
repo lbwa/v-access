@@ -17,18 +17,18 @@
 
 > 一个基于 `Vue` v2.x 版本的权限解决方案，其中包含 **元素** 控制和 **路由** 控制。
 
-|                   Peer dependencies                    | Required |
-| :----------------------------------------------------: | :------: |
-|        [vue](https://www.npmjs.com/package/vue)        |    ✔️    |
-| [vue-router](https://www.npmjs.com/package/vue-router) |    ✔️    |
+|                   Peer dependencies                    |                      Required                      |
+| :----------------------------------------------------: | :------------------------------------------------: |
+|        [vue](https://www.npmjs.com/package/vue)        |                         ✔️                         |
+| [vue-router](https://www.npmjs.com/package/vue-router) | 仅在调用 `Vue.use(VAccess, { router })` 时是必须的 |
 
-## Install
+## 安装
 
 ```bash
 npm i v-access --save
 ```
 
-## Schema
+## 数据结构
 
 `v-access` 所有认证功能都是基于从服务端提供的一个当前用户的 **权限列表** 来实现的。该权限列表中的每一项元素都表明了一个服务端的权限，如任意包含 `account.read` 的用户权限列表，都表明当前用户可访问服务端的 `account` 服务。值得注意的是，任意的权限名称取决于你自己，`v-access` 并不限制单个权限名称的格式。无论你如何命名服务端的各项服务名称，你都应该首先在获取到当前用于的权限列表后，立即调用 [init](#initialization) 函数，并传入当前权限列表来完成 `v-access` 的认证模块的初始化。
 
@@ -44,18 +44,29 @@ interface Access {
 type AccessList = Access[]
 ```
 
-## Initialization
+## 初始化
 
 在使用所有 `v-access` 提供的功能之前，你必须首先调用一个 `vue` 原型方法 `$$auth.init`，并传入当前用户的权限列表来完成功能初始化。
 
-```ts
-import Vue from 'vue'
-import router from './router'
-import VAccess from 'v-access'
+1.  当你仅仅只需要使用 **除开** 路由验证的基本的权限功能时：
 
-// 必须保证在创建 vue 根实例之前调用
-Vue.use(VAccess, { router })
-```
+    ```ts
+    import Vue from 'vue'
+    import VAccess from 'v-access'
+
+    Vue.use(VAccess.Basic) // 注意此处的大写属性
+    ```
+
+2.  当你需要使用包含元素和路由权限验证的完成权限验证功能时：
+
+    ```ts
+    import Vue from 'vue'
+    import router from './router'
+    import VAccess from 'v-access'
+
+    // 当调用 Vue.use 传入 VAccess 时，vue-router 实例是必须的。
+    Vue.use(VAccess, { router })
+    ```
 
 以下代码描述了当你在任意模块中获取到当前用户的权限列表后，如何传入到初始化函数中。
 
@@ -157,3 +168,11 @@ import router, { routes, beforeEach, afterEach } from './router'
 
 Vue.use(VAccess, { router, routes, beforeEach, afterEach })
 ```
+
+## Changelog
+
+此项目所有显著的修改都会记录于 [CHANGELOG](./CHANGELOG.md) 文件内.
+
+## License
+
+MIT © [Bowen Liu](https://github.com/lbwa)
