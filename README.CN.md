@@ -13,6 +13,9 @@
   <a href="https://www.npmjs.com/package/v-access">
     <img alt="npm type definitions" src="https://img.shields.io/npm/types/v-access?logo=typescript&style=flat-square">
   </a>
+  <a href="https://circleci.com/gh/lbwa/v-access">
+    <img alt="Circle CI" src="https://circleci.com/gh/lbwa/v-access.svg?style=svg">
+  </a>
 </p>
 
 > 一个基于 `Vue` v2.x 版本的权限解决方案，其中包含 **元素** 控制和 **路由** 控制。
