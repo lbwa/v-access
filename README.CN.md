@@ -20,10 +20,28 @@
 
 > 一个基于 `Vue` v2.x 版本的权限解决方案，其中包含 **元素** 控制和 **路由** 控制。
 
+<p align="center">
+  <a href="./README.md">English guide</a>
+</p>
+
 |                   Peer dependencies                    |                      Required                      |
 | :----------------------------------------------------: | :------------------------------------------------: |
 |        [vue](https://www.npmjs.com/package/vue)        |                         ✔️                         |
 | [vue-router](https://www.npmjs.com/package/vue-router) | 仅在调用 `Vue.use(VAccess, { router })` 时是必须的 |
+
+## Features
+
+- **易用性**: 开发者只需要提供一个当前用户的 **权限列表**，且不含任意的复杂初始化流程。之后，`v-access` 将提供完整的 **元素** 级或 **路由** 级别的前端权限认证功能。
+
+- **拓展性**: 支持任意具有 `id` 属性的权限数据结构。
+
+- **Native**: Support any `beforeEach` or `afterEach` navigation guards based on `vue-router`.
+
+- **动态性**: 支持任意的基于 `权限列表` 的动态路由添加。
+
+- **平滑性**: 支持在 **没有任意的页面重载（刷新）** 的情况下，清除动态添加的私有路由（常用于用户注销登陆）。
+
+- **多样性**: 同时支持任意的静态和私有（动态）路由认证功能。
 
 ## 安装
 

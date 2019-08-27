@@ -29,7 +29,21 @@
 |        [vue](https://www.npmjs.com/package/vue)        |                        ✔️                        |
 | [vue-router](https://www.npmjs.com/package/vue-router) | Only required for `Vue.use(VAccess, { router })` |
 
-## Install
+## Features
+
+- **Portable**: You only need to provide a current user access list without any complex initialization process, then `v-access` will provide all fully **element** and (or) **routes** access authorization functionalities.
+
+- **Flexible**: Support any access data type with `id` fleid.
+
+- **Native**: Support any `beforeEach` or `afterEach` navigation guards based on `vue-router`.
+
+- **Dynamic**: Support any private routes dynamic addition.
+
+- **Smooth**: Support dynamic routes resetting **without any page reload**.
+
+- **Various**: Support static and private(dynamic) routes authorization.
+
+## Installation
 
 ```bash
 npm i v-access --save
