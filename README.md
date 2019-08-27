@@ -13,6 +13,9 @@
   <a href="https://www.npmjs.com/package/v-access">
     <img alt="npm type definitions" src="https://img.shields.io/npm/types/v-access?logo=typescript&style=flat-square">
   </a>
+  <a href="https://circleci.com/gh/lbwa/v-access">
+    <img alt="Circle CI" src="https://circleci.com/gh/lbwa/v-access.svg?style=svg">
+  </a>
 </p>
 
 > An authorization solutions for Vue v2.x, including **elements** control and **routes** control.
@@ -21,10 +24,10 @@
   <a href="./README.CN.md">中文指南</a>
 </p>
 
-|                   Peer dependencies                    | Required |
-| :----------------------------------------------------: | :------: |
-|        [vue](https://www.npmjs.com/package/vue)        |    ✔️    |
-| [vue-router](https://www.npmjs.com/package/vue-router) |    ✔️    |
+|                   Peer dependencies                    |                     Required                     |
+| :----------------------------------------------------: | :----------------------------------------------: |
+|        [vue](https://www.npmjs.com/package/vue)        |                        ✔️                        |
+| [vue-router](https://www.npmjs.com/package/vue-router) | Only required for `Vue.use(VAccess, { router })` |
 
 ## Install
 
@@ -52,14 +55,25 @@ type AccessList = Access[]
 
 You **MUST** invoke `init` function which is belong to `Vue` prototype property named `$$auth` to pass current user **access list** before using `v-access` functionality.
 
-```ts
-import Vue from 'vue'
-import router from './router'
-import VAccess from 'v-access'
+1.  If you only need basic functionality without routes access control:
 
-// MUST ensure calling before creating vue root instance.
-Vue.use(VAccess, { router })
-```
+    ```ts
+    import Vue from 'vue'
+    import VAccess from 'v-access'
+
+    Vue.use(VAccess.Basic) // Be careful to handle capital letter
+    ```
+
+2.  If you need fully functionalities including element and routes access control:
+
+    ```ts
+    import Vue from 'vue'
+    import router from './router'
+    import VAccess from 'v-access'
+
+    // Vue-router instance is required if you pass VAccess into Vue.use
+    Vue.use(VAccess, { router })
+    ```
 
 Following code describe that passing access list when you have fetched access list at anywhere.
 
@@ -161,3 +175,11 @@ import router, { routes, beforeEach, afterEach } from './router'
 
 Vue.use(VAccess, { router, routes, beforeEach, afterEach })
 ```
+
+## Changelog
+
+All notable changes to this project will be documented in [CHANGELOG](./CHANGELOG.md) file.
+
+## License
+
+MIT © [Bowen Liu](https://github.com/lbwa)
