@@ -1,10 +1,10 @@
 import { NavigationGuard } from 'vue-router'
 import { compose } from '../shared/_utils'
-import VAccessCore from '.'
+import { EnhanceVAccess } from '.'
 import { RouteWithAccess, NextParameters } from '../shared/types'
 
 interface ComposeOptions {
-  auth: VAccessCore
+  auth: EnhanceVAccess
   redirect: string
 }
 
