@@ -1,4 +1,4 @@
-import VueRouter, { RouteConfig, NavigationGuard } from 'vue-router'
+import VueRouter, { RouteConfig } from 'vue-router'
 
 export interface Access {
   readonly id: string
@@ -20,14 +20,8 @@ export interface RouteWithAccess extends RouteConfig {
 
 export type UserGuard<T> = Function | Promise<T>
 
-export type NextParameters = (Parameters<(Parameters<NavigationGuard>)[2]>)[0]
-
-export type BeforeEachHook = NavigationGuard | Promise<NextParameters>
-
 export interface VAccessOptions {
   router: VueRouter
   routes?: RouteWithAccess[]
   redirect?: string
-  beforeEach?: BeforeEachHook
-  afterEach?: (Parameters<VueRouter['afterEach']>)[0]
 }
