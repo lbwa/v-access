@@ -1,18 +1,11 @@
 <template>
-  <AccessInfo />
+  <div class="route-with-access">Restriction:&nbsp;<code>react.read</code></div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import AccessInfo from '../components/AccessInfo.vue'
 
 export default Vue.extend({
-  name: 'RouteNamedReact',
-
-  components: {
-    AccessInfo
-  }
+  name: 'RouteNamedReact'
 })
 </script>
-
-<style lang="sass" scoped></style>

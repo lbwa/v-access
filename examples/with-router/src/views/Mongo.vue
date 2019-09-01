@@ -1,17 +1,16 @@
 <template>
-  <AccessInfo />
+  <div class="route-with-access">
+    Restriction:&nbsp;<code>vue.read</code>&nbsp;<strong>OR</strong>&nbsp;<code
+      >react.read</code
+    >
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import AccessInfo from '../components/AccessInfo.vue'
 
 export default Vue.extend({
-  name: 'RouteNamedMongo',
-
-  components: {
-    AccessInfo
-  }
+  name: 'RouteNamedMongo'
 })
 </script>
 
