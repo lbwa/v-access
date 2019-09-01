@@ -13,8 +13,8 @@
   <a href="https://www.npmjs.com/package/v-access">
     <img alt="npm type definitions" src="https://img.shields.io/npm/types/v-access?logo=typescript&style=flat-square">
   </a>
-  <a href="https://circleci.com/gh/lbwa/v-access">
-    <img alt="Circle CI" src="https://circleci.com/gh/lbwa/v-access.svg?style=svg">
+  <a href="https://github.com/lbwa/v-access/actions">
+    <img alt="Unit test workflow" src="https://github.com/lbwa/v-access/workflows/Unit%20test/badge.svg">
   </a>
 </p>
 
@@ -29,7 +29,21 @@
 |        [vue](https://www.npmjs.com/package/vue)        |                        ✔️                        |
 | [vue-router](https://www.npmjs.com/package/vue-router) | Only required for `Vue.use(VAccess, { router })` |
 
-## Install
+## Features
+
+- **Portable**: You only need to provide a current user access list without any complex initialization process, then `v-access` will provide all fully **element** and (or) **routes** access authorization functionalities.
+
+- **Flexible**: Support any access data type with `id` fleid.
+
+- **Dynamic**: Support any private routes dynamic addition.
+
+- **Smooth**: Support dynamic routes reset **without any page reloading**.
+
+- **Various**: Support static and private(dynamic) routes authorization.
+
+- **Native**: Support any `beforeEach` or `afterEach` navigation guards based on `vue-router`.
+
+## Installation
 
 ```bash
 npm i v-access --save
@@ -153,6 +167,10 @@ this.$$auth.strictList(['accessNameA', 'accessNameB'])
 </v-access>
 ```
 
+### Access reset
+
+`v-access` has provided a reset function named `reset` which could be invoked to delete any access list when developer want to rest current access container.
+
 ## Routes access control
 
 If you want to implement routes access control based on `vue-router`, your should provide a `vue-router` instance and a preset routes first. Other options is optional.
@@ -160,7 +178,7 @@ If you want to implement routes access control based on `vue-router`, your shoul
 |   Option   | Required |              Data type              |              Description              |
 | :--------: | :------: | :---------------------------------: | :-----------------------------------: |
 |   router   |    ✔️    |              VueRouter              |        A `vue-router` instance        |
-|   routes   |    ✔️    | Array<[RouteConfig][route-config]>  | preset routes list for access control |
+|   routes   |    ✔️    | Array<[RouteConfig][route-config]>  | Preset routes list for access control |
 |  redirect  |    -     |               string                |    Occurred by unauthorized access    |
 | beforeEach |    -     | [NavigationGuard][navigation-guard] | Same as `vue-router` beforeEach guard |
 | afterEach  |    -     |      [After hook][after-hook]       | Same as `vue-router` afterEach guard  |
@@ -175,6 +193,66 @@ import router, { routes, beforeEach, afterEach } from './router'
 
 Vue.use(VAccess, { router, routes, beforeEach, afterEach })
 ```
+
+### Public routes authorization
+
+> Public static routes is passed by developer when `vue-router` initialization.
+
+You only need to set `access` or `weakAccess` field of any routes if you want to authorize any public static routes.
+
+1. Any element of `access` field MUST be satisfied, otherwise url redirect will be occurred.
+
+   ```ts
+   interface PublicRoutesWithStrictAuth extends RouteConfig {
+     meta: {
+       access: string[]
+     }
+   }
+   ```
+
+1. Current authorization will pass if at least one has be satisfied.
+
+   ```ts
+   interface PublicRouesWithWeakAuth extends RouteConfig {
+     meta: {
+       weakAccess: string[]
+     }
+   }
+   ```
+
+**NOTICE：** Any routes without `access` or `weakAccess` fields will pass routes authorization by default.
+
+### Private routes authorization
+
+> Private dynamic routes are come from `Vue.use(VAccess, { router, routes }`.
+
+As mentioned above, The developer passes a preset private route list in `Vue.use`. The `v-access` will generate the final private routes based on the current user's **access list** and added to the current `vue-router` instance.
+
+The data type of private routes provided by developer also supports `access` and `weakAccess` fields, same as public routes.
+
+1. Strict authorization, same as public routes
+
+   ```ts
+   interface PrivateRoutesWithStrictAuth extends RouteConfig {
+     meta: {
+       access: string[]
+     }
+   }
+   ```
+
+1. Weak authorization, same as public routes
+
+   ```ts
+   interface PrivateRoutesWithWeakAuth extends RouteConfig {
+     meta: {
+       weakAccess: string[]
+     }
+   }
+   ```
+
+### Routes reset
+
+As with [access resets](#access-reset), the current access container will be reset without page reloading when developer calls `this.$$auth.reset()` with `Vue.use(VAccess, options)`.
 
 ## Changelog
 

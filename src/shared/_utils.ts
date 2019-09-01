@@ -1,11 +1,6 @@
 const __PROD__ = process.env.NODE_ENV === 'production'
 const noop: Function = () => {}
 
-export function compose(...fns: Function[]) {
-  return (...args: any[]) =>
-    fns.reduce((result, fn) => fn(...(result || [])), args)
-}
-
 export let log = noop
 export let assert = noop
 

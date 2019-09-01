@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import VAccess from 'v-access'
 
 declare module '*.vue' {
   import Vue from 'vue'
@@ -8,6 +7,6 @@ declare module '*.vue' {
 
 declare module 'vue/types/vue' {
   interface Vue {
-    $$auth: VAccess
+    $$auth: any
   }
 }

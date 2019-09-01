@@ -20,6 +20,7 @@
   "homepage": "https://github.com/lbwa/v-access#readme",
   "scripts": {
     "clean": "rm -vrf dist/*",
+    "serve:router": "yarn build && cd examples/with-router && yarn serve",
     "build": "npm run clean && npm run build:umd && npm run build:es",
     "build:umd": "cross-env TARGET=umd rollup --config build/rollup.config.js",
     "build:es": "cross-env TARGET=es rollup --config build/rollup.config.js",

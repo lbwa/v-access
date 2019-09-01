@@ -13,14 +13,35 @@
   <a href="https://www.npmjs.com/package/v-access">
     <img alt="npm type definitions" src="https://img.shields.io/npm/types/v-access?logo=typescript&style=flat-square">
   </a>
+  <a href="https://github.com/lbwa/v-access/actions">
+    <img alt="Unit test workflow" src="https://github.com/lbwa/v-access/workflows/Unit%20test/badge.svg">
+  </a>
 </p>
 
 > 一个基于 `Vue` v2.x 版本的权限解决方案，其中包含 **元素** 控制和 **路由** 控制。
+
+<p align="center">
+  <a href="./README.md">English guide</a>
+</p>
 
 |                   Peer dependencies                    |                      Required                      |
 | :----------------------------------------------------: | :------------------------------------------------: |
 |        [vue](https://www.npmjs.com/package/vue)        |                         ✔️                         |
 | [vue-router](https://www.npmjs.com/package/vue-router) | 仅在调用 `Vue.use(VAccess, { router })` 时是必须的 |
+
+## Features
+
+- **易用性**: 开发者只需要提供一个当前用户的 **权限列表**，且不含任意的复杂初始化流程。之后，`v-access` 将提供完整的 **元素** 级或 **路由** 级别的前端权限认证功能。
+
+- **拓展性**: 支持任意具有 `id` 属性的权限数据结构。
+
+- **动态性**: 支持任意的基于 `权限列表` 的动态路由添加。
+
+- **平滑性**: 支持在 **没有任意的页面重载（刷新）** 的情况下，清除动态添加的私有路由（常用于用户注销登陆）。
+
+- **多样性**: 同时支持任意的静态和私有（动态）路由认证功能。
+
+- **原生性**: 支持任意基于 `vue-router` 的 `beforeEach` 全局前置导航守卫和 `afterEach` 全局后置导航守卫.
 
 ## 安装
 
@@ -146,6 +167,10 @@ this.$$auth.strictList(['accessNameA', 'accessNameB'])
 </v-access>
 ```
 
+### 权限重置
+
+`v-access` 实例提供了一个 `reset` 方法，当开发者需要重置当前的权限容器时，调用 `this.$$auth.reset()` 即可将容器清空。
+
 ## 路由权限认证
 
 当你想要实现基于 `vue-router` 的路由权限认证时，你应提供一个 `vue-router` 实例和一个预设的私有路由集合。剩余的其他选项都是可选的。
@@ -168,6 +193,66 @@ import router, { routes, beforeEach, afterEach } from './router'
 
 Vue.use(VAccess, { router, routes, beforeEach, afterEach })
 ```
+
+### 公有静态路由权限认证
+
+> 公有静态路由是指开发者在实例化 `vue-router` 时传入的 `routes` 列表中的项。
+
+如果你需要对所有公有路由实现实时地权限认证，那么你仅仅需要将对应的 `routes` 加入以下 `access` 或 `weakAccess` 字段：
+
+1. 所有 `access` 列表中的权限都应被满足，否则将导致路由认证失败，并发生重定向。
+
+   ```ts
+   interface PublicRoutesWithStrictAuth extends RouteConfig {
+     meta: {
+       access: string[]
+     }
+   }
+   ```
+
+1. 仅仅只需要满足 `weakAccess` 中的某一项权限，即可通过当次路由权限验证。
+
+   ```ts
+   interface PublicRouesWithWeakAuth extends RouteConfig {
+     meta: {
+       weakAccess: string[]
+     }
+   }
+   ```
+
+**注意：** 任意未添加 `access` 或 `weakAccess` 字段的公有路由，都 **默认会** 通过 `v-access` 的路由权限认证。
+
+### 私有动态路由权限认证
+
+> 私有动态路由是指开发者在调用 `Vue.use(VAccess, { router, routes })` 传入的 `routes` 列表中的项。
+
+如前文所述，开发者在 `Vue.use` 中传递一个预设的私有路由列表。`v-access` 会根据当前用户的 **权限列表** 并结合之前传入的预设私有路由表生成最终的私有路由表，并添加到当前 `vue-router` 实例中。
+
+开发者提供的私有动态路由的格式如同公有静态路由一样，支持 `access` 和 `weakAccess` 字段。
+
+1. 路由强认证
+
+   ```ts
+   interface PrivateRoutesWithStrictAuth extends RouteConfig {
+     meta: {
+       access: string[]
+     }
+   }
+   ```
+
+1. 路由弱认证
+
+   ```ts
+   interface PrivateRoutesWithWeakAuth extends RouteConfig {
+     meta: {
+       weakAccess: string[]
+     }
+   }
+   ```
+
+### 路由重置
+
+如 [权限重置](#权限重置) 一样，当开发者在 `Vue.use(VAccess, options)` 模式下调用 `this.$$auth.reset()` 时，不仅可以重置当前权限容器，而且可在 **不发生页面重载** 的情况下实现将之前添加的私有动态路由删除。
 
 ## Changelog
 
