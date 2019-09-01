@@ -24,4 +24,5 @@ export interface VAccessOptions {
   router: VueRouter
   routes?: RouteWithAccess[]
   redirect?: string
+  exclude: string[] | RegExp
 }

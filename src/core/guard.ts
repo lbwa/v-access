@@ -1,31 +1,43 @@
 import { NavigationGuard } from 'vue-router'
 import { EnhanceVAccess } from '.'
-import { RouteWithAccess } from '../shared/types'
+import { RouteWithAccess, VAccessOptions } from '../shared/types'
 
 interface ComposeOptions {
   auth: EnhanceVAccess
-  redirect: string
+  redirect: VAccessOptions['redirect']
+  exclude: VAccessOptions['exclude']
 }
 
 export function authorizer({
   auth,
-  redirect
+  redirect,
+  exclude
 }: ComposeOptions): NavigationGuard {
-  const whiteList = [redirect]
+  const isInExclude = (function(condition) {
+    if (Array.isArray(condition))
+      return (route: RouteWithAccess) => condition.includes(route.path)
 
-  return function(to, _, next) {
-    if (!whiteList.includes(to.path)) {
-      // Uninitialized or unauthorized will cause redirect behavior
-      if (!auth.created || !auth.verifyRouteAccess(to as RouteWithAccess)) {
-        return next(`${redirect}?unauthorized_redirect=${to.fullPath}`)
-      }
+    if (condition instanceof RegExp) {
+      return (route: RouteWithAccess) => condition.test(route.path)
     }
 
-    /**
-     * vue-router accepts a beforeEach hooks list
-     * Every beforeEach hook should invoke `next` function to next beforeEach
-     * hook in the pipeline or resolve current navigation
-     */
-    next()
+    return () => false
+  })(exclude)
+
+  const verifyRouteAccess = (route: RouteWithAccess) =>
+    auth.created && auth.verifyRouteAccess(route as RouteWithAccess)
+
+  return function(to, _, next) {
+    if (to.path === redirect || isInExclude(to) || verifyRouteAccess(to)) {
+      /**
+       * vue-router accepts a beforeEach hooks list
+       * Every beforeEach hook should invoke `next` function to
+       * **next beforeEach** hook in the pipeline or resolve current navigation
+       */
+      return next()
+    }
+
+    // Uninitialized or unauthorized will cause redirect behavior
+    next(`${redirect}?unauthorized=${to.fullPath}`)
   }
 }

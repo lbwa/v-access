@@ -51,17 +51,19 @@ npm i v-access --save
 
 All authorization functionalities are based on a access **list** which should be provided by your any back-end services. Every element in the list represents an access to a kind of back-end service functionalities. For example, any user access list including `account.read` represents current user has access to `account` service. Your access name is up to you. Whatever you name your services, your should invoke [init](#initialization) function to pass access list for `v-access` initialization.
 
-**One access** of user access list should has following structure:
+- **One access** of user access list should has following structure:
 
-```ts
-interface Access {
-  // 'id' field is required
-  id: string
-  [key: string]: any
-}
+  ```ts
+  interface Access {
+    // 'id' field is required
+    id: string
+    [key: string]: any
+  }
 
-type AccessList = Access[]
-```
+  type AccessList = Access[]
+  ```
+
+- **One route** with access or weak access has specific structure in [here](#public-routes-authorization).
 
 ## Initialization
 
@@ -173,11 +175,12 @@ this.$$auth.strictList(['accessNameA', 'accessNameB'])
 
 If you want to implement routes access control based on `vue-router`, your should provide a `vue-router` instance and a preset routes first. Other options is optional.
 
-|  Option  | Required |             Data type              |              Description              |
-| :------: | :------: | :--------------------------------: | :-----------------------------------: |
-|  router  |    ✔️    |             VueRouter              |        A `vue-router` instance        |
-|  routes  |    ✔️    | Array<[RouteConfig][route-config]> | Preset routes list for access control |
-| redirect |    -     |               string               |    Occurred by unauthorized access    |
+|  Option  |           Required            |      Data type      |                                                         Description                                                         |
+| :------: | :---------------------------: | :-----------------: | :-------------------------------------------------------------------------------------------------------------------------: |
+|  router  |              ✔️               |     `VueRouter`     |                                                   A `vue-router` instance                                                   |
+|  routes  |              ✔️               | `RouteWithAccess[]` |                                            Preset routes list for access control                                            |
+| redirect | (default: `/@v-access-error`) |      `string`       |                                               Occurred by unauthorized access                                               |
+| exclude  |        (default: `[]`)        | `string[] | RegExp` | All of routes matched `exclude` will skip authorization, even if it doesn't satisfy `access` or `weakAccess` field of route |
 
 [route-config]: https://router.vuejs.org/api/#routes
 
@@ -195,6 +198,8 @@ Vue.use(VAccess, { router, routes })
 You only need to set `access` or `weakAccess` field of any routes if you want to authorize any public static routes.
 
 1. Any element of `access` field MUST be satisfied, otherwise url redirect will be occurred.
+
+   > RouteConfig is a reference from official `vue-router` [documentation][route-config].
 
    ```ts
    interface PublicRoutesWithStrictAuth extends RouteConfig {
