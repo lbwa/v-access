@@ -5,7 +5,7 @@ import { assert } from './shared/_utils'
 
 const install: typeof EnhanceVAccess.install = function(
   Vue,
-  { router, routes = [], redirect = UNAUTHORIZED_ROUTE }
+  { router, routes = [], redirect = UNAUTHORIZED_ROUTE, exclude = [] }
 ) {
   assert(
     router,
@@ -19,7 +19,7 @@ const install: typeof EnhanceVAccess.install = function(
 
   Vue.component('VAccess', VAccessComponent(Vue))
 
-  router.beforeEach(authorizer({ auth, redirect }))
+  router.beforeEach(authorizer({ auth, redirect, exclude }))
 }
 
 export default install
