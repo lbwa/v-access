@@ -165,7 +165,7 @@ a
     text-decoration: dotted underline
 
   &.router-link-exact-active
-    color: #61dafb
+    color: #067df7
 
 code
   padding: 4px 8px

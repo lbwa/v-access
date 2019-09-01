@@ -5,7 +5,12 @@
     </div>
     <v-access access="react.read">
       <div class="v-access-component">
-        With <code>&lt;v-access&gt;</code> component:&nbsp;<code
+        Within <code>&lt;v-access&gt;</code> component:&nbsp;<code
+          >react.read</code
+        >
+      </div>
+      <div class="v-access-component">
+        Within <code>&lt;v-access&gt;</code> component:&nbsp;<code
           >react.read</code
         >
       </div>

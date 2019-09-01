@@ -1,7 +1,6 @@
 import { CreateElement, VueConstructor } from 'vue'
-import { assert } from '../shared/_utils'
 
-export default function VAccessComponent(Vue: VueConstructor) {
+export default function VAccess(Vue: VueConstructor) {
   return Vue.extend({
     name: 'VAccess',
 
@@ -17,23 +16,16 @@ export default function VAccessComponent(Vue: VueConstructor) {
     },
 
     render(h: CreateElement) {
-      const children = this.$slots.default
-
-      assert(
-        children && children.length === 1,
-        'Only support one element as children element when you are using <v-access>.'
-      )
-
       if (Array.isArray(this.access)) {
         return (this.strict
         ? this.$$auth.strictList(this.access as string[])
         : this.$$auth.weakList(this.access as string[]))
-          ? (children && children[0]) || h()
+          ? h('div', { class: 'v-access' }, this.$slots.default)
           : h()
       }
 
       if (this.$$auth.has(this.access)) {
-        return (children && children[0]) || h()
+        return h('div', { class: 'v-access' }, this.$slots.default)
       }
       return h()
     }
