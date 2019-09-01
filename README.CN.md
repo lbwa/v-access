@@ -51,17 +51,19 @@ npm i v-access --save
 
 `v-access` 所有认证功能都是基于从服务端提供的一个当前用户的 **权限列表** 来实现的。该权限列表中的每一项元素都表明了一个服务端的权限，如任意包含 `account.read` 的用户权限列表，都表明当前用户可访问服务端的 `account` 服务。值得注意的是，任意的权限名称取决于你自己，`v-access` 并不限制单个权限名称的格式。无论你如何命名服务端的各项服务名称，你都应该首先在获取到当前用于的权限列表后，立即调用 [init](#initialization) 函数，并传入当前权限列表来完成 `v-access` 的认证模块的初始化。
 
-**任意一个** 权限列表中的单个服务权限都应遵顼以下结构：
+- **任意一个** 权限列表中的单个服务权限都应遵顼以下结构：
 
-```ts
-interface Access {
-  // 'id' 字段是唯一，且必须的
-  id: string
-  [key: string]: any
-}
+  ```ts
+  interface Access {
+    // 'id' 字段是唯一，且必须的
+    id: string
+    [key: string]: any
+  }
 
-type AccessList = Access[]
-```
+  type AccessList = Access[]
+  ```
+
+- **一个** 具有权限认证的路由应该遵顼 [此数据结构](#公有静态路由权限认证)。
 
 ## 初始化
 
@@ -173,11 +175,12 @@ this.$$auth.strictList(['accessNameA', 'accessNameB'])
 
 当你想要实现基于 `vue-router` 的路由权限认证时，你应提供一个 `vue-router` 实例和一个预设的私有路由集合。剩余的其他选项都是可选的。
 
-|  Option  | Required |             Data type              |               Description                |
-| :------: | :------: | :--------------------------------: | :--------------------------------------: |
-|  router  |    ✔️    |             VueRouter              |          一个 `vue-router` 实例          |
-|  routes  |    ✔️    | Array<[RouteConfig][route-config]> |        用于权限控制的预设路由集合        |
-| redirect |    -     |               string               | 当用户进入未授权路由时，将重定向至此地址 |
+|  Option  |           Required           |      Data type      |                                               Description                                                |
+| :------: | :--------------------------: | :-----------------: | :------------------------------------------------------------------------------------------------------: |
+|  router  |              ✔️              |     `VueRouter`     |                                          一个 `vue-router` 实例                                          |
+|  routes  |              ✔️              | `RouteWithAccess[]` |                                        用于权限控制的预设路由集合                                        |
+| redirect | (默认值: `/@v-access-error`) |      `string`       |                                     Occurred by unauthorized access                                      |
+| exclude  |        (默认值: `[]`)        | `string[] | RegExp` | **所有** 匹配 `exclude` 选项的项，都会跳过路由认证，即使该路由的 `access` 或 `weakAccess` 字段未被满足。 |
 
 [route-config]: https://router.vuejs.org/api/#routes
 
@@ -195,6 +198,8 @@ Vue.use(VAccess, { router, routes })
 如果你需要对所有公有路由实现实时地权限认证，那么你仅仅需要将对应的 `routes` 加入以下 `access` 或 `weakAccess` 字段：
 
 1. 所有 `access` 列表中的权限都应被满足，否则将导致路由认证失败，并发生重定向。
+
+   > `RouteConfig` 引用自 `vue-router` 的官方[文档][route-config]。
 
    ```ts
    interface PublicRoutesWithStrictAuth extends RouteConfig {
