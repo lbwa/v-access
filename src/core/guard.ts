@@ -14,19 +14,18 @@ export function authorizer({
   const whiteList = [redirect]
 
   return function(to, _, next) {
-    // to next beforeEach hook or resolve current navigation
-    if (whiteList.includes(to.path)) return next()
-
-    // NOTICE: auth.reset should be invoked when user logout
-    if (!auth.created) {
-      return next(`${redirect}?access_redirect=${to.fullPath}`)
+    if (!whiteList.includes(to.path)) {
+      // Uninitialized or unauthorized will cause redirect behavior
+      if (!auth.created || !auth.verifyRouteAccess(to as RouteWithAccess)) {
+        return next(`${redirect}?unauthorized_redirect=${to.fullPath}`)
+      }
     }
 
-    if (!auth.verifyRouteAccess(to as RouteWithAccess)) {
-      return next(`${redirect}?access_redirect=${to.fullPath}`)
-    }
-
-    // to next beforeEach hook in the pipeline or resolve current navigation
+    /**
+     * vue-router accepts a beforeEach hooks list
+     * Every beforeEach hook should invoke `next` function to next beforeEach
+     * hook in the pipeline or resolve current navigation
+     */
     next()
   }
 }
