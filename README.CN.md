@@ -41,8 +41,6 @@
 
 - **多样性**: 同时支持任意的静态和私有（动态）路由认证功能。
 
-- **原生性**: 支持任意基于 `vue-router` 的 `beforeEach` 全局前置导航守卫和 `afterEach` 全局后置导航守卫.
-
 ## 安装
 
 ```bash
@@ -175,23 +173,19 @@ this.$$auth.strictList(['accessNameA', 'accessNameB'])
 
 当你想要实现基于 `vue-router` 的路由权限认证时，你应提供一个 `vue-router` 实例和一个预设的私有路由集合。剩余的其他选项都是可选的。
 
-|   Option   | Required |              Data type              |               Description                |
-| :--------: | :------: | :---------------------------------: | :--------------------------------------: |
-|   router   |    ✔️    |              VueRouter              |          一个 `vue-router` 实例          |
-|   routes   |    ✔️    | Array<[RouteConfig][route-config]>  |        用于权限控制的预设路由集合        |
-|  redirect  |    -     |               string                | 当用户进入未授权路由时，将重定向至此地址 |
-| beforeEach |    -     | [NavigationGuard][navigation-guard] |   同 `vue-router` beforeEach 路由守卫    |
-| afterEach  |    -     |      [After hook][after-hook]       |    同 `vue-router` afterEach 路由守卫    |
+|  Option  | Required |             Data type              |               Description                |
+| :------: | :------: | :--------------------------------: | :--------------------------------------: |
+|  router  |    ✔️    |             VueRouter              |          一个 `vue-router` 实例          |
+|  routes  |    ✔️    | Array<[RouteConfig][route-config]> |        用于权限控制的预设路由集合        |
+| redirect |    -     |               string               | 当用户进入未授权路由时，将重定向至此地址 |
 
 [route-config]: https://router.vuejs.org/api/#routes
-[navigation-guard]: https://router.vuejs.org/guide/advanced/navigation-guards.html#global-before-guards
-[after-hook]: https://router.vuejs.org/guide/advanced/navigation-guards.html#global-after-hooks
 
 ```ts
 import Vue from 'vue'
-import router, { routes, beforeEach, afterEach } from './router'
+import router, { routes } from './router'
 
-Vue.use(VAccess, { router, routes, beforeEach, afterEach })
+Vue.use(VAccess, { router, routes })
 ```
 
 ### 公有静态路由权限认证
@@ -210,12 +204,39 @@ Vue.use(VAccess, { router, routes, beforeEach, afterEach })
    }
    ```
 
+   ```ts
+   {
+    path: '/private-routes',
+    component: () => import('@/views/Private'),
+    meta: {
+      access: [
+        'admin',
+        'mongo.read'
+      ]
+    }
+   }
+   ```
+
 1. 仅仅只需要满足 `weakAccess` 中的某一项权限，即可通过当次路由权限验证。
 
    ```ts
    interface PublicRouesWithWeakAuth extends RouteConfig {
      meta: {
        weakAccess: string[]
+     }
+   }
+   ```
+
+   ```ts
+   {
+     path: '/private-routes',
+     component: () => import('@/views/Private'),
+     meta: {
+       weakAccess: [
+         'admin',
+         'mongo.read',
+         'sql.read'
+       ]
      }
    }
    ```
@@ -240,12 +261,41 @@ Vue.use(VAccess, { router, routes, beforeEach, afterEach })
    }
    ```
 
+   ```ts
+   {
+    path: '/private-routes',
+    component: () => import('@/views/Private'),
+    meta: {
+      // This routes will be added when all elements has been satisfied
+      access: [
+        'admin',
+        'mongo.read'
+      ]
+    }
+   }
+   ```
+
 1. 路由弱认证
 
    ```ts
    interface PrivateRoutesWithWeakAuth extends RouteConfig {
      meta: {
        weakAccess: string[]
+     }
+   }
+   ```
+
+   ```ts
+   {
+     path: '/private-routes',
+     component: () => import('@/views/Private'),
+     // This routes will be added when at least one elements has been satisfied
+     meta: {
+       weakAccess: [
+         'admin',
+         'mongo.read',
+         'sql.read'
+       ]
      }
    }
    ```

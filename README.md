@@ -41,8 +41,6 @@
 
 - **Various**: Support static and private(dynamic) routes authorization.
 
-- **Native**: Support any `beforeEach` or `afterEach` navigation guards based on `vue-router`.
-
 ## Installation
 
 ```bash
@@ -175,23 +173,19 @@ this.$$auth.strictList(['accessNameA', 'accessNameB'])
 
 If you want to implement routes access control based on `vue-router`, your should provide a `vue-router` instance and a preset routes first. Other options is optional.
 
-|   Option   | Required |              Data type              |              Description              |
-| :--------: | :------: | :---------------------------------: | :-----------------------------------: |
-|   router   |    ✔️    |              VueRouter              |        A `vue-router` instance        |
-|   routes   |    ✔️    | Array<[RouteConfig][route-config]>  | Preset routes list for access control |
-|  redirect  |    -     |               string                |    Occurred by unauthorized access    |
-| beforeEach |    -     | [NavigationGuard][navigation-guard] | Same as `vue-router` beforeEach guard |
-| afterEach  |    -     |      [After hook][after-hook]       | Same as `vue-router` afterEach guard  |
+|  Option  | Required |             Data type              |              Description              |
+| :------: | :------: | :--------------------------------: | :-----------------------------------: |
+|  router  |    ✔️    |             VueRouter              |        A `vue-router` instance        |
+|  routes  |    ✔️    | Array<[RouteConfig][route-config]> | Preset routes list for access control |
+| redirect |    -     |               string               |    Occurred by unauthorized access    |
 
 [route-config]: https://router.vuejs.org/api/#routes
-[navigation-guard]: https://router.vuejs.org/guide/advanced/navigation-guards.html#global-before-guards
-[after-hook]: https://router.vuejs.org/guide/advanced/navigation-guards.html#global-after-hooks
 
 ```ts
 import Vue from 'vue'
-import router, { routes, beforeEach, afterEach } from './router'
+import router, { routes } from './router'
 
-Vue.use(VAccess, { router, routes, beforeEach, afterEach })
+Vue.use(VAccess, { router, routes })
 ```
 
 ### Public routes authorization
@@ -210,12 +204,39 @@ You only need to set `access` or `weakAccess` field of any routes if you want to
    }
    ```
 
+   ```ts
+   {
+     path: '/private-routes',
+     component: () => import('@/views/Private'),
+     meta: {
+       access: [
+         'admin',
+         'mongo.read'
+       ]
+     }
+   }
+   ```
+
 1. Current authorization will pass if at least one has be satisfied.
 
    ```ts
    interface PublicRouesWithWeakAuth extends RouteConfig {
      meta: {
        weakAccess: string[]
+     }
+   }
+   ```
+
+   ```ts
+   {
+     path: '/private-routes',
+     component: () => import('@/views/Private'),
+     meta: {
+       weakAccess: [
+         'admin',
+         'mongo.read',
+         'sql.read'
+       ]
      }
    }
    ```
@@ -240,12 +261,41 @@ The data type of private routes provided by developer also supports `access` and
    }
    ```
 
+   ```ts
+   {
+     path: '/private-routes',
+     component: () => import('@/views/Private'),
+     meta: {
+       // This routes will be added when all elements has been satisfied
+       access: [
+         'admin',
+         'mongo.read'
+       ]
+     }
+   }
+   ```
+
 1. Weak authorization, same as public routes
 
    ```ts
    interface PrivateRoutesWithWeakAuth extends RouteConfig {
      meta: {
        weakAccess: string[]
+     }
+   }
+   ```
+
+   ```ts
+   {
+     path: '/private-routes',
+     component: () => import('@/views/Private'),
+     // This routes will be added when at least one elements has been satisfied
+     meta: {
+       weakAccess: [
+         'admin',
+         'mongo.read',
+         'sql.read'
+       ]
      }
    }
    ```

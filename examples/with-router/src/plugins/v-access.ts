@@ -4,4 +4,4 @@ import router from '@/router'
 import pendingPrivateRoutes from '@/router/private'
 
 // vue-router instance is required
-Vue.use(PluginVAccess, { router, routes: pendingPrivateRoutes, redirect: '/' })
+Vue.use(PluginVAccess, { router, routes: pendingPrivateRoutes })

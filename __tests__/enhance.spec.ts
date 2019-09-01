@@ -1,11 +1,12 @@
 import VueRouter from 'vue-router'
+import Vue from 'vue'
 import { EnhanceVAccess } from 'src/core'
 import { RouteWithAccess } from 'src/shared/types'
 
 describe('EnhanceVAccess', () => {
   const pendingRoutes: RouteWithAccess[] = []
   const router = new VueRouter()
-  const auth = new EnhanceVAccess(router, pendingRoutes)
+  const auth = new EnhanceVAccess({ Vue, router, routes: pendingRoutes })
   const ACCESS_LIST = [
     {
       id: 'home.read'

@@ -2,31 +2,56 @@ import VueRouter, { RouterOptions } from 'vue-router'
 import { Access, RouteWithAccess } from '../shared/types'
 import { assert, log } from '../shared/_utils'
 import { BasicVAccess, createAccessMap } from './basic'
+import DefaultErrorComponent from '../components/Error'
+import { VueConstructor } from 'vue'
+
+export const UNAUTHORIZED_ROUTE = '/@v-access-error'
 
 export class EnhanceVAccess extends BasicVAccess {
   static Basic: typeof BasicVAccess
 
+  private Vue: VueConstructor
   private router: VueRouter
   private routerOptions: RouterOptions
   private pendingRoutes: RouteWithAccess[]
 
-  constructor(router: VueRouter, routes: RouteWithAccess[]) {
+  constructor({
+    Vue,
+    router,
+    routes
+  }: {
+    Vue: VueConstructor
+    router: VueRouter
+    routes: RouteWithAccess[]
+  }) {
     super()
     assert(
       this instanceof EnhanceVAccess,
       'VAccess is a constructor and should be called with the `new` keyword'
     )
+    this.Vue = Vue
     this.router = router
     this.routerOptions = router.options || {}
-    this.pendingRoutes = routes
+    this.pendingRoutes = routes || []
   }
 
   init(accessList: Access[]) {
     if (this.created) return
     this.map = createAccessMap(accessList)
 
-    if (this.router && this.pendingRoutes) {
-      const privateRoutes = this.createPrivateRoutes(this.pendingRoutes)
+    if (this.router) {
+      const privateRoutes = [
+        {
+          name: 'VAccessError',
+          path: UNAUTHORIZED_ROUTE,
+          component: DefaultErrorComponent(this.Vue),
+          props: {
+            errorCode: 401,
+            errorMessage: 'Unauthorized access'
+          }
+        },
+        ...this.createPrivateRoutes(this.pendingRoutes)
+      ]
       this.router.addRoutes(privateRoutes)
       log('Private routes', privateRoutes)
     }

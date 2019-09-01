@@ -1,23 +1,70 @@
 <template>
   <div id="app">
     <h1 class="title">v-access with vue-router</h1>
-    <subtitle />
-    <nav id="nav">
-      <router-link class="nav__link" to="/">Home</router-link>
-      <router-link class="nav__link" to="/vue"
-        >vue.read <strong>AND</strong> vue.write</router-link
+    <p class="subtitle">
+      <a class="subtitle__badge" href="https://www.npmjs.com/package/v-access">
+        <img
+          alt="npm"
+          src="https://img.shields.io/npm/v/v-access?logo=npm&style=flat"
+        />
+      </a>
+      <a
+        class="subtitle__badge"
+        href="https://github.com/lbwa/v-access/actions"
       >
-      <router-link class="nav__link" to="/react">react.read</router-link>
-      <router-link class="nav__link" to="/mongo"
-        >vue.write <strong>OR</strong> react.read</router-link
-      >
-    </nav>
-    <router-view class="router-view" />
+        <img
+          alt="Unit test workflow"
+          src="https://github.com/lbwa/v-access/workflows/Unit%20test/badge.svg"
+        />
+      </a>
+    </p>
     <section class="access-list">
       <label>Access list of current user:&nbsp;</label>
-      <span>{{ JSON.stringify(Object.keys($$auth.map)) }}</span>
+      <span
+        class="access-list__item"
+        v-for="access of $$auth.map"
+        :key="access.id"
+        ><code>{{ access.id }}</code></span
+      >
     </section>
     <loading :loading="loading" />
+
+    <div class="navigation">
+      <ul class="nav">
+        <li class="nav__item">
+          <router-link class="nav__item__link" to="/"
+            >Public routes without any authorization</router-link
+          >
+        </li>
+        <li class="nav__item">
+          <router-link class="nav__item__link" to="/angular"
+            >Public routes with strict authorization
+            (<code>vue.write</code>)</router-link
+          >
+        </li>
+        <li class="nav__item">
+          <router-link class="nav__item__link" to="/vue"
+            >Private route with strict authorization (<code>vue.read</code>
+            <strong>AND</strong> <code>vue.write</code>)</router-link
+          >
+        </li>
+        <li class="nav__item">
+          <router-link class="nav__item__link" to="/react"
+            >Private route with strict authorization
+            (<code>react.read</code>)</router-link
+          >
+        </li>
+        <li class="nav__item">
+          <router-link class="nav__item__link" to="/mongo"
+            >Private route with weak authorization (<code>vue.write</code>
+            <strong>OR</strong> <code>react.read</code>)</router-link
+          >
+        </li>
+      </ul>
+      <div class="router-view">
+        <router-view />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -25,7 +72,6 @@
 import Vue from 'vue'
 import { fetchUserAccess } from './api'
 import Loading from './components/Loading.vue'
-import Subtitle from './components/Subtitle.vue'
 
 export default Vue.extend({
   name: 'AppEntry',
@@ -37,8 +83,7 @@ export default Vue.extend({
   },
 
   components: {
-    Loading,
-    Subtitle
+    Loading
   },
 
   async created() {
@@ -56,26 +101,52 @@ export default Vue.extend({
 </script>
 
 <style lang="sass" scoped>
-#nav
-  padding: 30px
-
 .title
   text-transform: capitalize
 
+.subtitle
+  text-align: center
+
+  &__badge
+    & + &
+      margin-left: 5px
+
+.navigation
+  display: flex
+
 .nav
-  &__link
-    & + &::before
-      margin: 0 5px
-      content: '|'
+  flex: 1
+  margin: 0
+  padding: 30px
+  list-style: none
+
+  &__item
+    margin: 10px 0
+
+    &__link
+      & + &::before
+        margin: 0 5px
+        content: '|'
 
 .router-view
-  margin: 20px 40px 40px
+  flex: 1
+  display: flex
+  flex-direction: column
+  justify-content: center
+  margin: 30px
   padding: 20px
   border: 1px solid #eeeeee
   border-radius: 5px
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04)
 
 .access-list
   margin-top: 40px
+
+  &__item
+    & + &
+      &::before
+        margin-right: 5px
+        content: ','
 </style>
 
 <style lang="sass">
@@ -88,7 +159,17 @@ export default Vue.extend({
 
 a
   color: #2c3e50
+  text-decoration: none
+
+  &:hover
+    text-decoration: dotted underline
 
   &.router-link-exact-active
     color: #61dafb
+
+code
+  padding: 4px 8px
+  background-color: #0366d6
+  border-radius: 3px
+  color: white
 </style>

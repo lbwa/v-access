@@ -15,6 +15,13 @@ export default new Router({
         import(/* webpackChunkName: 'route-home' */ '@/views/Home.vue')
     },
     {
+      path: '/angular',
+      name: 'Angular',
+      meta: {
+        access: ['vue.write']
+      }
+    },
+    {
       path: '/401',
       name: 'Unauthorized',
       component: () =>

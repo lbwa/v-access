@@ -1,2 +1,2 @@
 export { BasicVAccess } from './basic'
-export { EnhanceVAccess } from './enhance'
+export { EnhanceVAccess, UNAUTHORIZED_ROUTE } from './enhance'

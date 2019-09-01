@@ -1,6 +1,8 @@
 <template functional>
   <div class="route-with-access">
-    Only for <strong>vue.read</strong> and <strong>vue.write</strong>
+    Restriction:&nbsp;<code>vue.read</code>&nbsp;<strong>AND</strong>&nbsp;<code
+      >react.read</code
+    >
   </div>
 </template>
 
@@ -9,5 +11,3 @@ export default {
   name: 'RouteNamedVue'
 }
 </script>
-
-<style lang="sass" scoped></style>
