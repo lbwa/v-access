@@ -104,7 +104,7 @@ fetchUserAccessList().then(({ list: userAccessList }: { list: Access[] }) =>
 
 1. Verification functions which is belong to `Vue` prototype property named `$$auth`
 
-**NOTICE:** Global component `<v-access>` only support **ONE** child element.
+**NOTICE:** Global component `<v-access>` supports **multiple** child components.
 
 ### Single verification
 

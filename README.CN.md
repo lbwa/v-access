@@ -104,7 +104,7 @@ fetchUserAccessList().then(({ list: userAccessList }: { list: Access[] }) =>
 
 1. 一些用于认证的 `vue` 原型方法 `$$auth`。
 
-**注意：** 全局组件 `<v-access>` 仅支持 **一个** 子元素。
+**注意：** 全局组件 `<v-access>` 同时支持 **多个** 子元素。
 
 ### 单一验证
 
