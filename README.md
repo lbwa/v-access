@@ -178,7 +178,7 @@ If you want to implement routes access control based on `vue-router`, your shoul
 |  Option  |           Required            |       Data type        |                                                         Description                                                         |
 | :------: | :---------------------------: | :--------------------: | :-------------------------------------------------------------------------------------------------------------------------: |
 |  router  |              ✔️               |      `VueRouter`       |                                                   A `vue-router` instance                                                   |
-|  routes  |              ✔️               |  `RouteWithAccess[]`   |                                            Preset routes list for access control                                            |
+|  routes  |        (default: `[]`)        |  `RouteWithAccess[]`   |                                            Preset routes list for access control                                            |
 | redirect | (default: `/@v-access-error`) |        `string`        |                                               Occurred by unauthorized access                                               |
 | exclude  |        (default: `[]`)        | `string[]` or `RegExp` | All of routes matched `exclude` will skip authorization, even if it doesn't satisfy `access` or `weakAccess` field of route |
 

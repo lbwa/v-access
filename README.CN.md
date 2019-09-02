@@ -178,7 +178,7 @@ this.$$auth.strictList(['accessNameA', 'accessNameB'])
 |  Option  |           Required           |      Data type      |                                               Description                                                |
 | :------: | :--------------------------: | :-----------------: | :------------------------------------------------------------------------------------------------------: |
 |  router  |              ✔️              |     `VueRouter`     |                                          一个 `vue-router` 实例                                          |
-|  routes  |              ✔️              | `RouteWithAccess[]` |                                        用于权限控制的预设路由集合                                        |
+|  routes  |        (默认值：`[]`)        | `RouteWithAccess[]` |                                        用于权限控制的预设路由集合                                        |
 | redirect | (默认值: `/@v-access-error`) |      `string`       |                                     Occurred by unauthorized access                                      |
 | exclude  |        (默认值: `[]`)        | `string[] | RegExp` | **所有** 匹配 `exclude` 选项的项，都会跳过路由认证，即使该路由的 `access` 或 `weakAccess` 字段未被满足。 |
 

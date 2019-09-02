@@ -9,7 +9,7 @@ const install: typeof EnhanceVAccess.install = function(
 ) {
   assert(
     router,
-    'You need provide vue-router instance to create router filter.'
+    'You need to provide vue-router instance to create authorizer for routes.'
   )
 
   const auth = new EnhanceVAccess({ Vue, router, routes })
