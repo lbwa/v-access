@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0](https://github.com/lbwa/v-access/compare/v0.1.0...v0.3.0) (2019-09-03)
+
+
+### Bug Fixes
+
+* **install:** correct <v-access> component name in the global scope ([79f96cb](https://github.com/lbwa/v-access/commit/79f96cb))
+* correct es module error when falsy 'esModuleInterop' ([152ab0d](https://github.com/lbwa/v-access/commit/152ab0d))
+* meta field is optional and correct hook type ([808d5f7](https://github.com/lbwa/v-access/commit/808d5f7))
+
+
+### Features
+
+* implement router resetting logic ([40e8151](https://github.com/lbwa/v-access/commit/40e8151))
+* **core:** add alias for weakList and strictList ([378265d](https://github.com/lbwa/v-access/commit/378265d))
+* **core:** implement private routes generation ([ad357be](https://github.com/lbwa/v-access/commit/ad357be))
+* **core:** prevent multiple `init` calling ([8a737bd](https://github.com/lbwa/v-access/commit/8a737bd))
+* **core:** rebuild core to split basic & enhance functionality ([f36b768](https://github.com/lbwa/v-access/commit/f36b768))
+* **core:** support route.meta.weakAccess ([815e4fc](https://github.com/lbwa/v-access/commit/815e4fc))
+* **enhance:** support default unauthorized handler page resolve [#6](https://github.com/lbwa/v-access/issues/6) ([#7](https://github.com/lbwa/v-access/issues/7)) ([fc24e20](https://github.com/lbwa/v-access/commit/fc24e20))
+* **guard:** implement 'exclude' in routes authorization ([#11](https://github.com/lbwa/v-access/issues/11)) ([5f1f406](https://github.com/lbwa/v-access/commit/5f1f406)), closes [#10](https://github.com/lbwa/v-access/issues/10)
+* **install:** attach install function to VAccesCore ([6ea71e9](https://github.com/lbwa/v-access/commit/6ea71e9))
+* **Route:** implement routes filter ([9b5c77e](https://github.com/lbwa/v-access/commit/9b5c77e))
+* **VAccess:** change VAccess component implementation and remove vue redundant global properties ([56e5b9b](https://github.com/lbwa/v-access/commit/56e5b9b))
+* implement router acccess control [#1](https://github.com/lbwa/v-access/issues/1) ([a6c9dcd](https://github.com/lbwa/v-access/commit/a6c9dcd))
+* **VAccess:** support multiple child components ([#9](https://github.com/lbwa/v-access/issues/9)) ([8ad0073](https://github.com/lbwa/v-access/commit/8ad0073)), closes [#8](https://github.com/lbwa/v-access/issues/8)
+* remove beforEach & afterEach API ([#5](https://github.com/lbwa/v-access/issues/5)) ([77ea3df](https://github.com/lbwa/v-access/commit/77ea3df))
+
 ## [0.2.0](https://github.com/lbwa/v-access/compare/v0.1.0...v0.2.0) (2019-08-26)
 
 
