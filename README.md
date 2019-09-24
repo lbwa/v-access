@@ -33,7 +33,7 @@
 
 - **Portable**: You only need to provide a current user access list without any complex initialization process, then `v-access` will provide all fully **element** and (or) **routes** access authorization functionalities.
 
-- **Flexible**: Support any access data type with `id` fleid.
+- **Flexible**: Support any access data type with `id` field.
 
 - **Dynamic**: Support any private routes dynamic addition.
 
@@ -47,9 +47,31 @@
 npm i v-access --save
 ```
 
-## Schema
+## Prerequisites
 
-All authorization functionalities are based on a access **list** which should be provided by your any back-end services. Every element in the list represents an access to a kind of back-end service functionalities. For example, any user access list including `account.read` represents current user has access to `account` service. Your access name is up to you. Whatever you name your services, your should invoke [init](#initialization) function to pass access list for `v-access` initialization.
+All authorization functionalities are based on an access **list** which should be provided by your back-end services (inspired by [GCP Cloud IAM](https://cloud.google.com/storage/docs/access-control/iam)). Every element in the list represents a permission (ability) which is used to access a kind of back-end service functionalities. One or multiple permissions can be contained by one user role.
+
+There is a best practice that uses syntax like `[scope].[module].[ability]` to represents the access of functionality, and `[scope]` is optional if you have no other external systems (scope).
+
+For example, any user access list including `account.read` represents current user has capability to access `account` service. There is a user role named `seller` would be made of `order.read` and `product.read`, which means any user includes `seller` role can access `order` service and `product` service. A user role is similar to the abilities set. System administrators would use user roles to distribute access abilities to low-level user. Any single access shouldn't be distributed directly.
+
+```ascii
+                          +--> access 1
+      +-----> user role 1 |
+      |                   +--> access 2
+      |
+      |                   +--> access 3
+user -+-----> user role 2 |
+      |                   +--> access 4
+      |
+      |                   +--> access 5
+      +-----> user role 3 |
+                          +--> access 6
+```
+
+The access name is up to you. Whatever you name your access elements, you should invoke [init](#initialization) function to pass the access list for `v-access` initialization.
+
+## Schema
 
 - **One access** of user access list should has following structure:
 
@@ -89,7 +111,7 @@ You **MUST** invoke `init` function which is belong to `Vue` prototype property 
     Vue.use(VAccess, { router })
     ```
 
-Following code describe that passing access list when you have fetched access list at anywhere.
+The following code describes that passing access list when you have fetched access-list anywhere.
 
 ```ts
 // In any vue instance
@@ -104,13 +126,13 @@ fetchUserAccessList().then(({ list: userAccessList }: { list: Access[] }) =>
 
 1. `Vue` global component named `v-access`.
 
-1. Verification functions which is belong to `Vue` prototype property named `$$auth`
+1. Verification functions which belong to `Vue` prototype property named `$$auth`
 
 **NOTICE:** Global component `<v-access>` supports **multiple** child components.
 
 ### Single verification
 
-Whether current user has **ONE** access.
+Whether the current user has **ONE** access.
 
 - function
 
@@ -128,7 +150,7 @@ this.$$auth.has('accessNameA')
 
 ### Weak verification
 
-Whether current user has **AT LEAST ONE** access.
+Whether the current user has **AT LEAST ONE** access.
 
 - function
 
@@ -148,7 +170,7 @@ this.$$auth.weakList(['accessNameA', 'accessNameB'])
 
 ### Strict verification
 
-Whether current user has **ALL** access.
+Whether the current user has **ALL** access.
 
 - function
 
@@ -169,18 +191,18 @@ this.$$auth.strictList(['accessNameA', 'accessNameB'])
 
 ### Access reset
 
-`v-access` has provided a reset function named `reset` which could be invoked to delete any access list when developer want to rest current access container.
+`v-access` has provided a reset function named `reset` which could be invoked to delete any access-list when the developer wants to rest current access container.
 
 ## Routes access control
 
-If you want to implement routes access control based on `vue-router`, your should provide a `vue-router` instance and a preset routes first. Other options is optional.
+If you want to implement routes access control based on `vue-router`, you should provide a `vue-router` instance and a preset routes first. Other options are optional.
 
-|  Option  |           Required            |       Data type        |                                                         Description                                                         |
-| :------: | :---------------------------: | :--------------------: | :-------------------------------------------------------------------------------------------------------------------------: |
-|  router  |              ✔️               |      `VueRouter`       |                                                   A `vue-router` instance                                                   |
-|  routes  |        (default: `[]`)        |  `RouteWithAccess[]`   |                                            Preset routes list for access control                                            |
-| redirect | (default: `/@v-access-error`) |        `string`        |                                               Occurred by unauthorized access                                               |
-| exclude  |        (default: `[]`)        | `string[]` or `RegExp` | All of routes matched `exclude` will skip authorization, even if it doesn't satisfy `access` or `weakAccess` field of route |
+|  Option  |           Required            |       Data type        |                                                           Description                                                           |
+| :------: | :---------------------------: | :--------------------: | :-----------------------------------------------------------------------------------------------------------------------------: |
+|  router  |              ✔️               |      `VueRouter`       |                                                     A `vue-router` instance                                                     |
+|  routes  |        (default: `[]`)        |  `RouteWithAccess[]`   |                                              Preset routes list for access control                                              |
+| redirect | (default: `/@v-access-error`) |        `string`        |                                                 Occurred by unauthorized access                                                 |
+| exclude  |        (default: `[]`)        | `string[]` or `RegExp` | All of the routes matched `exclude` will skip authorization, even if it doesn't satisfy `access` or `weakAccess` field of route |
 
 [route-config]: https://router.vuejs.org/api/#routes
 
@@ -193,11 +215,11 @@ Vue.use(VAccess, { router, routes })
 
 ### Public routes authorization
 
-> Public static routes is passed by developer when `vue-router` initialization.
+> Public static routes are passed by the developer when `vue-router` initialization.
 
 You only need to set `access` or `weakAccess` field of any routes if you want to authorize any public static routes.
 
-1. Any element of `access` field MUST be satisfied, otherwise url redirect will be occurred.
+1. Any element of `access` field MUST be satisfied, otherwise URL redirect will occur.
 
    > RouteConfig is a reference from official `vue-router` [documentation][route-config].
 
@@ -222,7 +244,7 @@ You only need to set `access` or `weakAccess` field of any routes if you want to
    }
    ```
 
-1. Current authorization will pass if at least one has be satisfied.
+1. Current authorization will pass if at least one has to be satisfied.
 
    ```ts
    interface PublicRouesWithWeakAuth extends RouteConfig {
@@ -252,9 +274,9 @@ You only need to set `access` or `weakAccess` field of any routes if you want to
 
 > Private dynamic routes are come from `Vue.use(VAccess, { router, routes }`.
 
-As mentioned above, The developer passes a preset private route list in `Vue.use`. The `v-access` will generate the final private routes based on the current user's **access list** and added to the current `vue-router` instance.
+As mentioned above, The developer passes a preset private route list in `Vue.use`. The `v-access` will generate the final private routes based on the current user's **access-list** and added to the current `vue-router` instance.
 
-The data type of private routes provided by developer also supports `access` and `weakAccess` fields, same as public routes.
+The data type of private routes provided by developer also supports `access` and `weakAccess` fields, the same as public routes.
 
 1. Strict authorization, same as public routes
 
@@ -271,7 +293,7 @@ The data type of private routes provided by developer also supports `access` and
      path: '/private-routes',
      component: () => import('@/views/Private'),
      meta: {
-       // This routes will be added when all elements has been satisfied
+       // This routes will be added when all elements have been satisfied
        access: [
          'admin',
          'mongo.read'
@@ -294,7 +316,7 @@ The data type of private routes provided by developer also supports `access` and
    {
      path: '/private-routes',
      component: () => import('@/views/Private'),
-     // This routes will be added when at least one elements has been satisfied
+     // This routes will be added when at least one element has been satisfied
      meta: {
        weakAccess: [
          'admin',
@@ -308,6 +330,45 @@ The data type of private routes provided by developer also supports `access` and
 ### Routes reset
 
 As with [access resets](#access-reset), the current access container will be reset without page reloading when developer calls `this.$$auth.reset()` with `Vue.use(VAccess, options)`.
+
+## With other hooks
+
+[Separation of concerns](https://en.wikipedia.org/wiki/Separation_of_concerns) is a design principle for separating distinct parts, and implement the high cohesion and low coupling between multiple independent parts. [router.beforeEach] navigation guard accepts **multiple** hooks to implement a navigation pipe. This is the theoretical basis for `v-access` implementation. `v-access` has provided a solution for separating `authorizer` part. Developers couldn't care about how `authorizer` works anymore.
+
+According to the above description, you can just pass other hooks into [router.beforeEach] if you need to add extra logic for navigation control.
+
+```js
+/* src/router/index.js */
+const router = new VueRouter({
+  // Omit options
+})
+
+/**
+ * This part is your other navigation hook.
+ * v-access doesn't care about whether extra hooks has been passed by the
+ * developer, and only care about its **authorizer** works.
+ */
+router.beforeEach((to, from, next) => {
+  /* Anything you want to do */
+})
+
+export default router
+```
+
+```js
+/* src/plugins/v-access.js */
+import Vue from 'vue'
+import VAccess from 'v-access'
+import router from '../router'
+
+const routes = [/* Omit routes */]
+
+Vue.use(VAccess, { router, routes }))
+```
+
+If you aren't familiar with how multiple global before hooks work, I strongly recommend you to read the documentation about [router.beforeEach].
+
+[router.beforeeach]: https://router.vuejs.org/guide/advanced/navigation-guards.html#global-before-guards
 
 ## Changelog
 
