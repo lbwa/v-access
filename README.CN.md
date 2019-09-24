@@ -47,9 +47,31 @@
 npm i v-access --save
 ```
 
-## 数据结构
+## 先决条件
 
-`v-access` 所有认证功能都是基于从服务端提供的一个当前用户的 **权限列表** 来实现的。该权限列表中的每一项元素都表明了一个服务端的权限，如任意包含 `account.read` 的用户权限列表，都表明当前用户可访问服务端的 `account` 服务。值得注意的是，任意的权限名称取决于你自己，`v-access` 并不限制单个权限名称的格式。无论你如何命名服务端的各项服务名称，你都应该首先在获取到当前用于的权限列表后，立即调用 [init](#initialization) 函数，并传入当前权限列表来完成 `v-access` 的认证模块的初始化。
+`v-access` 所有认证功能都是基于从服务端提供的一个当前用户的 **权限列表** 来实现的（受启发于 [GCP Cloud IAM](https://cloud.google.com/storage/docs/access-control/iam)）。该权限列表中的每一项元素都表明了一个服务端的权限。并且一个或多个权限可组成为一个用户角色。
+
+存在一个最佳实践，使用形如 `[scope].[module].[ability]` 的单个权限格式来表示一个功能的访问权限，并且 `[scope]` 在没有其他外部系统（作用域）的情况下是可选的。
+
+例如，任意包含 `account.read` 的用户权限列表，都表明当前用户可访问服务端的 `account` 服务。当存在一个由 `order.read` 和 `product.read` 组成的名为 `seller` 的用户角色时，任意包含该 `seller` 用户角色的用户都可以访问 `order` 服务和 `product` 服务。此处的用户角色本质上就是用户的能力集合。系统管理员可分配指定的用户角色给任意低级别用户。任意单个 `access` 都不应直接分配给低级别用户。
+
+```ascii
+                          +--> access 1
+      +-----> user role 1 |
+      |                   +--> access 2
+      |
+      |                   +--> access 3
+user -+-----> user role 2 |
+      |                   +--> access 4
+      |
+      |                   +--> access 5
+      +-----> user role 3 |
+                          +--> access 6
+```
+
+值得注意的是，任意的权限名称取决于你自己，`v-access` 并不限制单个权限名称的格式。无论你如何命名服务端的各项服务名称，你都应该首先在获取到当前用于的权限列表后，立即调用 [init](#initialization) 函数，并传入当前权限列表来完成 `v-access` 的认证模块的初始化。
+
+## 数据结构
 
 - **任意一个** 权限列表中的单个服务权限都应遵顼以下结构：
 
@@ -308,6 +330,44 @@ Vue.use(VAccess, { router, routes })
 ### 路由重置
 
 如 [权限重置](#权限重置) 一样，当开发者在 `Vue.use(VAccess, options)` 模式下调用 `this.$$auth.reset()` 时，不仅可以重置当前权限容器，而且可在 **不发生页面重载** 的情况下实现将之前添加的私有动态路由删除。
+
+## 与其他全局导航守卫
+
+[关注点分离](https://en.wikipedia.org/wiki/Separation_of_concerns) 是一个用于分离差异化的系统组成部分，并在各个独立的模块之间形成 “高内聚，低耦合”。[router.beforeEach] 导航守卫接受 **多个** 钩子函数来实现一个 `导航管道`。这正是 `v-access` 的理论基础。`v-access` 提供了一个分离 `授权者` 的解决方案。开发者可不再过多关心 `authorizer` 是如何生效的了。
+
+至此，结合 [router.beforeEach] 的文档描述，当你需要额外的钩子函数时：
+
+```js
+/* src/router/index.js */
+const router = new VueRouter({
+  // Omit options
+})
+
+/**
+ * 该部分是开发者传入的额外的导航 hooks 函数
+ * v-access 并不关心开发者是否传入了导航 hooks 函数，它仅关心自身的 “授权者” 工作
+ */
+router.beforeEach((to, from, next) => {
+  /* Anything you want to do */
+})
+
+export default router
+```
+
+```js
+/* src/plugins/v-access.js */
+import Vue from 'vue'
+import VAccess from 'v-access'
+import router from '../router'
+
+const routes = [/* Omit routes */]
+
+Vue.use(VAccess, { router, routes }))
+```
+
+如果你还不清楚多个全局前置导航守卫是如何工作的，那么我推荐你首先仔细阅读 [router.beforeEach] 的官方文档。
+
+[router.beforeeach]: https://router.vuejs.org/guide/advanced/navigation-guards.html#global-before-guards
 
 ## Changelog
 

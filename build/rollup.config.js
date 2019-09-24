@@ -1,5 +1,6 @@
 import typescript from 'rollup-plugin-typescript2'
 import { terser } from 'rollup-plugin-terser'
+import replace from 'rollup-plugin-replace'
 import path from 'path'
 const version = require('../package.json').version
 
@@ -40,6 +41,9 @@ function createConfig(opts) {
     plugins: [
       typescript({
         clean: true
+      }),
+      replace({
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
       }),
       terser({
         output: {
