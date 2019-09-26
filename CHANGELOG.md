@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [0.3.1](https://github.com/lbwa/v-access/compare/v0.3.0...v0.3.1) (2019-09-26)
+
+
+### Bug Fixes
+
+* correct env variables replacement in the building process ([79ca0ba](https://github.com/lbwa/v-access/commit/79ca0ba))
+
 ## [0.3.0](https://github.com/lbwa/v-access/compare/v0.1.0...v0.3.0) (2019-09-03)
 
 
