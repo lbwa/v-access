@@ -18,7 +18,7 @@
   </a>
 </p>
 
-> An authorization solutions for Vue v2.x, including **elements** control and **routes** control.
+> An authorization solution for Vue v2.x, including **elements** control and **routes** control.
 
 <p align="center">
   <a href="./README.CN.md">中文指南</a>
