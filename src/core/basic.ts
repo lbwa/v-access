@@ -1,30 +1,22 @@
-import { Access, AccessMap, VAccessOptions } from '../shared/types'
+import { Access, VAccessOptions } from '../shared/types'
 import { VueConstructor } from 'vue'
-
-export function createAccessMap(accessList: Access[]): AccessMap {
-  return accessList.reduce(
-    (map: AccessMap, access: Access) =>
-      Object.assign(map, {
-        [access.id]: access
-      }),
-    {}
-  )
-}
-
+import map from './map'
 export class BasicVAccess {
   static install: (Vue: VueConstructor, VAccessOptions: VAccessOptions) => void
 
-  map: AccessMap = {}
   created: boolean = false
+  get map() {
+    return map.get()
+  }
 
   init(accessList: Access[]) {
     if (this.created) return
-    this.map = createAccessMap(accessList)
+    map.set(accessList)
     this.created = true
   }
 
   has(accessId: string) {
-    return !!this.map[accessId]
+    return !!map.get(accessId)
   }
 
   weak(accessIdList: string[]) {
@@ -44,7 +36,7 @@ export class BasicVAccess {
   }
 
   reset() {
-    this.map = {}
+    map.set([])
     this.created = false
   }
 }
