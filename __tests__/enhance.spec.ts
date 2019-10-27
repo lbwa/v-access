@@ -1,6 +1,7 @@
 import VueRouter from 'vue-router'
 import Vue from 'vue'
 import { EnhanceVAccess } from 'src/core'
+import { accessMap } from 'src/core/map'
 import { RouteWithAccess } from 'src/shared/types'
 
 describe('EnhanceVAccess', () => {
@@ -30,14 +31,14 @@ describe('EnhanceVAccess', () => {
 
   it('Accept access list and create access map', () => {
     auth.init(ACCESS_LIST)
-    expect(auth.map).toBeDefined()
-    expect(Object.keys(auth.map).length).toBe(ACCESS_LIST.length)
+    expect(accessMap.value).toBeDefined()
+    expect(Object.keys(accessMap.value).length).toBe(ACCESS_LIST.length)
   })
 
   it('Prevent multiple initialization', () => {
     auth.init([ACCESS_LIST[0]])
-    expect(auth.map).toBeDefined()
-    expect(Object.keys(auth.map).length).toBe(ACCESS_LIST.length)
+    expect(accessMap.value).toBeDefined()
+    expect(Object.keys(accessMap.value).length).toBe(ACCESS_LIST.length)
   })
 
   it('Has ONE access', () => {
@@ -209,7 +210,7 @@ describe('EnhanceVAccess', () => {
 
   it('Reset all data', () => {
     auth.reset()
-    expect(auth.map).toEqual({})
+    expect(accessMap.value).toEqual({})
     expect(auth.created).toBe(false)
   })
 })
