@@ -1,6 +1,6 @@
 import VueRouter, { RouterOptions } from 'vue-router'
 import { BasicVAccess } from './basic'
-import map from './map'
+import { setAccessMap } from './map'
 import { Access, RouteWithAccess } from '../shared/types'
 import { log } from '../shared/utils'
 import DefaultErrorComponent from '../components/Error'
@@ -35,7 +35,7 @@ export class EnhanceVAccess extends BasicVAccess {
   init(accessList: Access[]) {
     if (this.created) return
 
-    map.set(accessList)
+    setAccessMap(accessList)
 
     if (this.router) {
       const privateRoutes = [
@@ -58,7 +58,7 @@ export class EnhanceVAccess extends BasicVAccess {
   }
 
   reset() {
-    map.set([])
+    setAccessMap([])
     this.created = false
 
     /**

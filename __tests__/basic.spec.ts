@@ -1,4 +1,5 @@
 import { BasicVAccess } from 'src/core'
+import { accessMap } from 'src/core/map'
 
 describe('BasicVAccess', () => {
   const auth = new BasicVAccess()
@@ -23,14 +24,14 @@ describe('BasicVAccess', () => {
 
   it('Accept access list and create access map', () => {
     auth.init(ACCESS_LIST)
-    expect(auth.map).toBeDefined()
-    expect(Object.keys(auth.map).length).toBe(ACCESS_LIST.length)
+    expect(accessMap.value).toBeDefined()
+    expect(Object.keys(accessMap.value).length).toBe(ACCESS_LIST.length)
   })
 
   it('Only invoke once before reset() calling', () => {
     auth.init(ACCESS_LIST.concat({ id: 'react.write' }))
-    expect(auth.map).toBeDefined()
-    expect(Object.keys(auth.map).length).toBe(ACCESS_LIST.length)
+    expect(accessMap.value).toBeDefined()
+    expect(Object.keys(accessMap.value).length).toBe(ACCESS_LIST.length)
   })
 
   it('Has ONE access', () => {
@@ -66,7 +67,7 @@ describe('BasicVAccess', () => {
 
   it('Reset all data', () => {
     auth.reset()
-    expect(auth.map).toEqual({})
+    expect(accessMap.value).toEqual({})
     expect(auth.created).toBe(false)
   })
 })

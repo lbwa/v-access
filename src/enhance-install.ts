@@ -1,13 +1,13 @@
 import { EnhanceVAccess, UNAUTHORIZED_ROUTE } from './core'
 import VAccessComponent from './components/VAccess'
 import { authorizer } from './core/guard'
-import VueRouter from 'vue-router'
+import { accessMap } from './core/map'
 
 const install: typeof EnhanceVAccess.install = function(
   Vue,
   { router, routes = [], redirect = UNAUTHORIZED_ROUTE, exclude = [] }
 ) {
-  if (!(router instanceof VueRouter)) {
+  if (!router) {
     throw new Error(
       'You need to provide a vue-router instance for routes authorizer.'
     )
@@ -15,10 +15,11 @@ const install: typeof EnhanceVAccess.install = function(
 
   const auth = new EnhanceVAccess({ Vue, router, routes })
 
-  // make $$auth is reactivity
+  // Only make $$auth.map is reactivity
   // for better compatibilities use Vue.util.defineReactive,
   // instead Vue.observable(only supported by Vue v2.6.0+)
-  Vue.util.defineReactive(Vue.prototype, '$$auth', auth)
+  Vue.util.defineReactive(auth, 'map', accessMap)
+  Vue.prototype.$$auth = auth
 
   Vue.component('VAccess', VAccessComponent(Vue))
 

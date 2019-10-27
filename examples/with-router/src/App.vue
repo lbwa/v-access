@@ -22,7 +22,7 @@
       <label>Access list of current user:&nbsp;</label>
       <span
         class="access-list__item"
-        v-for="access of $$auth.map"
+        v-for="access of $$auth.map.value"
         :key="access.id"
         ><code>{{ access.id }}</code></span
       >
