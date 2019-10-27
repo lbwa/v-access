@@ -1,7 +1,8 @@
 import VueRouter, { RouterOptions } from 'vue-router'
+import { BasicVAccess } from './basic'
+import map from './map'
 import { Access, RouteWithAccess } from '../shared/types'
-import { assert, log } from '../shared/_utils'
-import { BasicVAccess, createAccessMap } from './basic'
+import { log } from '../shared/utils'
 import DefaultErrorComponent from '../components/Error'
 import { VueConstructor } from 'vue'
 
@@ -25,10 +26,6 @@ export class EnhanceVAccess extends BasicVAccess {
     routes: RouteWithAccess[]
   }) {
     super()
-    assert(
-      this instanceof EnhanceVAccess,
-      'VAccess is a constructor and should be called with the `new` keyword'
-    )
     this.Vue = Vue
     this.router = router
     this.routerOptions = router.options || {}
@@ -37,7 +34,8 @@ export class EnhanceVAccess extends BasicVAccess {
 
   init(accessList: Access[]) {
     if (this.created) return
-    this.map = createAccessMap(accessList)
+
+    map.set(accessList)
 
     if (this.router) {
       const privateRoutes = [
@@ -60,11 +58,11 @@ export class EnhanceVAccess extends BasicVAccess {
   }
 
   reset() {
-    this.map = {}
+    map.set([])
     this.created = false
 
     /**
-     * @description to implement addRoutes resetting
+     * @description reset routes added by addRoutes()
      * @ref https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
      */
     this.router.matcher = new VueRouter(
