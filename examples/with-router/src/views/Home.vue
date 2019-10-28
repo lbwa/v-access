@@ -14,15 +14,21 @@
           >react.read</code
         >
       </div>
+      <home-child />
     </v-access>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import HomeChild from './HomeChild'
 
 export default Vue.extend({
-  name: 'home'
+  name: 'home',
+
+  components: {
+    HomeChild
+  }
 })
 </script>
 

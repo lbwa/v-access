@@ -4,6 +4,8 @@ export default function VAccess(Vue: VueConstructor) {
   return Vue.extend({
     name: 'VAccess',
 
+    functional: true,
+
     props: {
       access: {
         type: [Array, String],
@@ -15,19 +17,25 @@ export default function VAccess(Vue: VueConstructor) {
       }
     },
 
-    render(h: CreateElement) {
-      if (Array.isArray(this.access)) {
-        return (this.strict
-        ? this.$$auth.strictList(this.access as string[])
-        : this.$$auth.weakList(this.access as string[]))
-          ? h('div', { class: 'v-access' }, this.$slots.default)
-          : h()
+    render(h: CreateElement, { props, slots, parent }) {
+      const vNodes = []
+      const defaultSlots = slots().default
+
+      if (Array.isArray(props.access)) {
+        if (
+          parent.$$auth[props.strict ? 'strict' : 'weak'](
+            props.access as string[]
+          )
+        ) {
+          vNodes.push(...defaultSlots)
+        }
       }
 
-      if (this.$$auth.has(this.access)) {
-        return h('div', { class: 'v-access' }, this.$slots.default)
+      if (parent.$$auth.has(props.access as string)) {
+        vNodes.push(...defaultSlots)
       }
-      return h()
+
+      return vNodes
     }
   })
 }
