@@ -19,17 +19,17 @@ function isString(val: any): val is string {
   return typeof val === 'string'
 }
 
-export function install(Vue: VueConstructor) {
-  Vue.component('VAccess', registerVAComponent(Vue))
+export default {
+  install(Vue: VueConstructor) {
+    Vue.component('VAccess', registerVAComponent(Vue))
 
-  Object.defineProperty(Vue.prototype, '$$verify', {
-    get() {
-      return abilitiesRef.current
-    }
-  })
+    Object.defineProperty(Vue.prototype, '$$verify', {
+      get() {
+        return abilitiesRef.current
+      }
+    })
+  }
 }
-
-export default install
 
 export function init(
   vue: Vue,
