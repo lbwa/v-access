@@ -8,6 +8,7 @@ import {
   RouteWithPrivilege
 } from './core/routes'
 
+let isInitialized = false
 const abilitiesRef: Record<'current', AbilitiesSet | null> = {
   current: null
 }
@@ -30,6 +31,9 @@ export function init(
   routes: RouteWithPrivilege[],
   redirect: string
 ) {
+  if (isInitialized) return
+  isInitialized = true
+
   abilitiesRef.current = AbilitiesSet.create(abilities)
 
   let _root = vue
