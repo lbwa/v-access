@@ -7,7 +7,7 @@ import {
   addRoutes,
   registerAuthorizer,
   removeRoutes,
-  RouteWithPrivilege
+  RouteWithAbility
 } from './core/routes'
 
 let isInitialized = false
@@ -35,7 +35,7 @@ export function init(
   vue: Vue,
   abilities: Ability[],
   redirect: string,
-  routes: RouteWithPrivilege[] = []
+  routes: RouteWithAbility[] = []
 ) {
   invariant(
     isString(redirect),

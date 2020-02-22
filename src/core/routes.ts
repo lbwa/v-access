@@ -7,12 +7,12 @@ import { AbilitiesSet, Ability } from './ability'
 import { isDef } from 'src/shared/utils'
 import invariant from 'tiny-invariant'
 
-export interface RouteWithPrivilege extends RouteConfig {
-  readonly children?: RouteWithPrivilege[]
+export interface RouteWithAbility extends RouteConfig {
+  readonly children?: RouteWithAbility[]
   readonly meta?: {
     strict?: Ability[]
     weak?: Ability[]
-    privilege: Ability
+    ability?: Ability
   }
 }
 
@@ -21,14 +21,14 @@ let isRoutesAdded = false
 
 export function addRoutes(
   router: VueRouter,
-  routes: RouteWithPrivilege[],
+  routes: RouteWithAbility[],
   abilitiesSet: AbilitiesSet
 ) {
   if (isRoutesAdded) return
 
   routerOptions = router.options
-  const createRoutes = (routes: RouteWithPrivilege[]) =>
-    routes.reduce((list: RouteWithPrivilege[], route) => {
+  const createRoutes = (routes: RouteWithAbility[]) =>
+    routes.reduce((list: RouteWithAbility[], route) => {
       const shallow = { ...route }
       if (verifyRoute(route, abilitiesSet)) {
         if (shallow.children) {
@@ -62,7 +62,7 @@ export function removeRoutes(router: VueRouter) {
  * included `meta.x` properties.
  */
 export function verifyRoute(
-  route: RouteWithPrivilege,
+  route: RouteWithAbility,
   abilitiesSet: AbilitiesSet
 ) {
   const { meta = {} as Record<string, any> } = route
@@ -75,8 +75,8 @@ export function verifyRoute(
     return abilitiesSet.verifySome(meta.weak)
   }
 
-  if (isDef(meta.privilege)) {
-    return abilitiesSet.has(meta.privilege)
+  if (isDef(meta.ability)) {
+    return abilitiesSet.has(meta.ability)
   }
   return true
 }
