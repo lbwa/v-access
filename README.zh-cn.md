@@ -21,7 +21,7 @@
 > An authentication solution based on Vue.js v2.x, including **elements-based** control and **route-based** control.
 
 <p align="center">
-  <a href="./README.zh-cn.md">中文指南</a> | English
+  中文指南 | <a href="./README.md">English</a>
 </p>
 
 |                      Dependencies                      | Required |
