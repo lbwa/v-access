@@ -1,10 +1,11 @@
 import typescript from 'rollup-plugin-typescript2'
 import { terser } from 'rollup-plugin-terser'
-import replace from 'rollup-plugin-replace'
+import replace from '@rollup/plugin-replace'
+import resolve from '@rollup/plugin-node-resolve'
 import path from 'path'
 const version = require('../package.json').version
 
-const resolve = p => path.resolve(__dirname, '../', p)
+const fromRoot = p => path.resolve(__dirname, '../', p)
 
 const banner = `/*!
   * v-access v${version}
@@ -14,37 +15,31 @@ const banner = `/*!
 
 const build = {
   es: {
-    output: resolve('dist/v-access.esm.js'),
-    format: 'es'
+    env: 'development',
+    output: fromRoot('dist/v-access.esm.development.js'),
+    format: 'es',
+    plugins: []
+  },
+
+  cjs: {
+    env: 'development',
+    output: fromRoot('dist/v-access.cjs.development.js'),
+    format: 'cjs',
+    plugins: []
   },
 
   umd: {
-    output: resolve('dist/v-access.min.js'),
-    format: 'umd'
-  }
-}
+    env: 'development',
+    output: fromRoot('dist/v-access.development.js'),
+    format: 'umd',
+    plugins: []
+  },
 
-function createConfig(opts) {
-  const options = build[opts]
-  const config = {
-    input: resolve('src/index.ts'),
-    output: {
-      file: options.output,
-      format: options.format,
-      banner,
-      name: 'VAccess', // global name in window
-      globals: {
-        'vue-router': 'VueRouter' // Only for umd format
-      }
-    },
-    external: ['vue-router'], // For ES module format
+  min: {
+    env: 'production',
+    output: fromRoot('dist/v-access.production.min.js'),
+    format: 'umd',
     plugins: [
-      typescript({
-        clean: true
-      }),
-      replace({
-        'process.env.NODE_ENV': JSON.stringify('production')
-      }),
       terser({
         output: {
           comments: function(node, comment) {
@@ -59,8 +54,56 @@ function createConfig(opts) {
       })
     ]
   }
+}
+
+function createConfig(opts) {
+  const options = build[opts]
+  const config = {
+    input: fromRoot('src/install.ts'),
+    treeshake: true,
+    output: {
+      file: options.output,
+      format: options.format,
+      banner,
+      name: 'VAccess', // global name in window
+      sourcemap: true,
+      exports: 'named',
+      external: ['vue-router', 'vue']
+    },
+    plugins: [
+      // https://rollupjs.org/guide/en/#warning-treating-module-as-external-dependency
+      resolve({
+        browser: true
+      }),
+      replace({
+        'process.env.NODE_ENV': JSON.stringify(options.env),
+        __DEV__: JSON.stringify(options.env)
+      }),
+      typescript({
+        clean: true,
+        typescript: require('typescript'),
+        tsconfigDefaults: {
+          exclude: [
+            // all TS test files, regardless whether co-located or in test/ etc
+            '**/*.spec.ts',
+            '**/*.test.ts',
+            '**/*.spec.tsx',
+            '**/*.test.tsx',
+            // TS defaults below
+            'node_modules',
+            'bower_components',
+            'jspm_packages'
+          ],
+          compilerOptions: {
+            sourceMap: true,
+            declaration: true
+          }
+        }
+      })
+    ].concat(options.plugins)
+  }
 
   return config
 }
 
-module.exports = createConfig(process.env.TARGET)
+module.exports = Object.keys(build).map(createConfig)
