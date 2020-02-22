@@ -13,6 +13,10 @@ const abilitiesRef: Record<'current', AbilitiesSet | null> = {
   current: null
 }
 
+function isString(val: any): val is string {
+  return typeof val === 'string'
+}
+
 export function install(Vue: VueConstructor) {
   Vue.component('VAccess', registerVAComponent(Vue))
 
@@ -28,9 +32,15 @@ export default install
 export function init(
   vue: Vue,
   abilities: Ability[],
-  routes: RouteWithPrivilege[],
-  redirect: string
+  redirect: string,
+  routes: RouteWithPrivilege[] = []
 ) {
+  invariant(
+    isString(redirect),
+    `"Redirect" MUST be a vue-router fullPath (string type) and we got ${Object.prototype.toString.call(
+      redirect
+    )}.`
+  )
   if (isInitialized) return
   isInitialized = true
 
