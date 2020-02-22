@@ -13,6 +13,7 @@ export interface RouteWithAbility extends RouteConfig {
     strict?: Ability[]
     weak?: Ability[]
     ability?: Ability
+    [key: string]: any
   }
 }
 
