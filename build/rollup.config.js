@@ -77,7 +77,7 @@ function createConfig(opts) {
       }),
       replace({
         'process.env.NODE_ENV': JSON.stringify(options.env),
-        __DEV__: JSON.stringify(options.env)
+        __DEV__: JSON.stringify(options.env === 'development')
       }),
       typescript({
         clean: true,
