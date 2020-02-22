@@ -1,10 +1,12 @@
-import Vue, { VueConstructor } from 'vue'
 import invariant from 'tiny-invariant'
+import Vue, { VueConstructor } from 'vue'
+import VueRouter from 'vue-router'
 import registerVAComponent from './components/VAccess'
 import { AbilitiesSet, Ability } from './core/ability'
 import {
   addRoutes,
   registerAuthorizer,
+  removeRoutes,
   RouteWithPrivilege
 } from './core/routes'
 
@@ -57,4 +59,11 @@ export function init(
   _root.$options.router!.beforeEach(
     registerAuthorizer(redirect, abilitiesRef.current)
   )
+}
+
+export function reset(router: VueRouter) {
+  invariant(router, 'Should provide a vue-router instance.')
+  removeRoutes(router)
+  isInitialized = false
+  abilitiesRef.current = null
 }

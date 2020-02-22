@@ -7,8 +7,6 @@ import { AbilitiesSet, Ability } from './ability'
 import { isDef } from 'src/shared/utils'
 import invariant from 'tiny-invariant'
 
-let isRoutesAdded = false
-
 export interface RouteWithPrivilege extends RouteConfig {
   readonly children?: RouteWithPrivilege[]
   readonly meta?: {
@@ -18,7 +16,8 @@ export interface RouteWithPrivilege extends RouteConfig {
   }
 }
 
-let routerOptions: RouterOptions // use to create new VueRouter instance
+let routerOptions: RouterOptions | null
+let isRoutesAdded = false
 
 export function addRoutes(
   router: VueRouter,
@@ -49,7 +48,12 @@ export function addRoutes(
 }
 
 export function removeRoutes(router: VueRouter) {
-  router.matcher = new VueRouter(Object.assign({}, routerOptions)).matcher
+  const Router = Object.getPrototypeOf(router).constructor
+
+  // router.matcher includes all routes we set, so we replace it with new
+  // matcher to reset our vue-router instance
+  router.matcher = new Router(Object.assign({}, routerOptions)).matcher
+  routerOptions = null
   isRoutesAdded = false
 }
 
