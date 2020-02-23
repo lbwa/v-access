@@ -62,6 +62,7 @@ yarn add v-access
       strict?: Ability[]
       weak?: Ability[]
       ability?: Ability
+      [key: string]: any
     }
   }
   ```
@@ -75,6 +76,8 @@ yarn add v-access
 The entire authorization system is based on **an ability/privilege list** provided by any back-end services. Every element in the list represents an ability that is used to access the corresponding database. A _user role_ consists of multiple abilities, represents an _ability set_. One actual user could have multiple user roles.
 
 There is a best practice that uses syntax like `[scope].[module].[ability]` (eg. [IAM](https://cloud.google.com/storage/docs/access-control/iam)) to represents one ability. In this case, `[scope]` is optional if you have no other external systems (scope).
+
+The advantage of this design is that the role of multiple users or the ability of multiple roles can be intersected. Multiple abilities can be arbitrarily combined to form a **flexible abilities set**.
 
 The following chart represents an actual user's ability set:
 
@@ -103,7 +106,7 @@ import VAccess from 'v-access'
 Vue.use(VAccess)
 ```
 
-This package should be installed **before** the root Vue instance creation. This process will inject a global component named `VAccess` and a prototype function named `$$verify`.
+This package should be installed **before** the root Vue instance creation. This process will inject a global component named `VAccess` and a prototype property named `$$verify`.
 
 ```ts
 import { init } from 'v-access'
@@ -116,10 +119,10 @@ export default {
   created() {
     // a vuex action or http request
     fetchAbilities(payload)
-      .then(list => list.map(abilityInfo => ability.name))
+      .then(list => list.map(abilityInfo => ability.name)) // ability serialization
       .then(abilities =>
         init(this, abilities, '/forbidden', [
-          /* pass any private routes list filtered by abilities */
+          /* routes which need to add to vue-router would be filtered by abilities first */
         ])
       )
       .catch(console.error)
@@ -127,7 +130,7 @@ export default {
 }
 ```
 
-No matter the original abilities structure is, you should always pass an `Ability` (a `string` type) list to `init` function for initializing global authentication functionality.
+No matter the original abilities structure is, you should always pass an `Ability identity` list (a `string[]` type) to `init` function for initializing global authentication functionality.
 
 ```ts
 export declare function init(
@@ -140,37 +143,53 @@ export declare function init(
 
 NOTE: `redirect` only support a [fullPath](https://router.vuejs.org/api/#route-object-properties) string, not object type.
 
-As you may have noticed, you can pass any private routes to `init` function. All private routes addition could be handled by this package and will be filtered by `abilities` set.
+As you may have noticed, you can pass a global preset private routes collection to `init` function for dynamic routes addition. All valid private routes generation could be handled by this package and will be filtered by `abilities` set.
 
-## How to verify ability
+### Scenario
+
+This case would be useful when you want to create private routes that need to be filtered by the current user abilities.
+
+## How to authenticate ability
 
 1. Using `element-based` authentication
 
-   ```html
-   <v-access :ability="['github.repo.read', 'github.repo.pull']">
-     <!-- any child components or HTML nodes -->
-   </v-access>
+   1. `VAccess` component
 
-   <!-- or -->
-   <v-access strict :ability="['github.repo.read', 'github.repo.pull']">
-     <!-- any child components or HTML nodes -->
-   </v-access>
+      ```html
+      <v-access :ability="['github.repo.read', 'github.repo.pull']">
+        <!-- any child components or HTML nodes -->
+      </v-access>
 
-   <!-- or -->
-   <v-access :ability="github.repo.read">
-     <!-- any child components or HTML nodes -->
-   </v-access>
-   ```
+      <!-- or -->
+      <v-access strict :ability="['github.repo.read', 'github.repo.pull']">
+        <!-- any child components or HTML nodes -->
+      </v-access>
 
-   |  Props  |           Type           |              Description               |
-   | :-----: | :----------------------: | :------------------------------------: |
-   | ability | `Ability` or `Ability[]` |        What you want to verify         |
-   | strict  |        `boolean`         | Whether we should verify all abilities |
+      <!-- or -->
+      <v-access :ability="github.repo.read">
+        <!-- any child components or HTML nodes -->
+      </v-access>
+      ```
+
+      |  Props  |           Type           |                        Description                         |
+      | :-----: | :----------------------: | :--------------------------------------------------------: |
+      | ability | `Ability` or `Ability[]` |  An ability or ability set that needs to be authenticated  |
+      | strict  |        `boolean`         | Whether we should authenticate every abilities in the list |
+
+   1. `$$verify` object
+
+      `$$verify` objects are essentially an instance of `Set` subclass. It supports all [prototype functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set#Methods) of `Set`. The following table describes several extra authentication functions.
+
+      |  Function  |                Type                 |                           Description                           |
+      | :--------: | :---------------------------------: | :-------------------------------------------------------------: |
+      | verifyAll  | `(abilities: Ability[]) => boolean` |    Whether we should authenticate every ability in the list     |
+      | verifySome | `(abilities: Ability[]) => boolean` | Whether we should authenticate at least one ability in the list |
 
 1. Using `route-based` authentication
 
    ```ts
    const routes = [
+     // This route always pass authentication
      {
        name: 'PublicRoutes',
        path: '/public',
@@ -193,11 +212,11 @@ As you may have noticed, you can pass any private routes to `init` function. All
    ]
    ```
 
-   | Meta prop |      Objective       |
-   | :-------: | :------------------: |
-   | `strict`  |     All elements     |
-   |  `weak`   | At least one element |
-   | `ability` |     One element      |
+   | Meta prop |                            Objective                            |
+   | :-------: | :-------------------------------------------------------------: |
+   | `strict`  |    Whether we should authenticate every ability in the list     |
+   |  `weak`   | Whether we should authenticate at least one ability in the list |
+   | `ability` |         A single ability that needs to be authenticated         |
 
 ## Reset
 
@@ -215,7 +234,7 @@ reset(this.$router)
 
 ## With other hooks
 
-[Separation of concerns](https://en.wikipedia.org/wiki/Separation_of_concerns) is a design principle for separating distinct parts, and implement the high cohesion and low coupling between multiple independent parts. [Vue router navigation guard][doc-router-beforeeach] accepts **multiple** hooks to implement a navigation pipe. This is the theoretical basis for `v-access` implementation. `v-access` has provided an `authorizer` as a `beforeEach` guard.
+[Separation of concerns](https://en.wikipedia.org/wiki/Separation_of_concerns) is a design principle for separating distinct parts, and implement the high cohesion and low coupling between multiple independent parts. [Vue router navigation guard][doc-router-beforeeach] accepts **multiple** hooks to implement a navigation pipeline via this principle. This is the theoretical basis for `v-access` implementation. `v-access` has provided an `authorizer` as a `beforeEach` guard.
 
 If you aren't familiar with how multiple global `beforeEach` hooks work, I strongly recommend you to read [the documentation][doc-router-beforeeach] about `router.beforeEach`.
 
