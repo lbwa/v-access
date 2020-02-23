@@ -23,7 +23,7 @@ export default {
   install(Vue: VueConstructor) {
     Vue.component('VAccess', registerVAComponent(Vue))
 
-    Object.defineProperty(Vue.prototype, '$$verify', {
+    Object.defineProperty(Vue.prototype, '$$auth', {
       get() {
         return abilitiesRef.current
       }

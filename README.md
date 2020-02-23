@@ -106,7 +106,7 @@ import VAccess from 'v-access'
 Vue.use(VAccess)
 ```
 
-This package should be installed **before** the root Vue instance creation. This process will inject a global component named `VAccess` and a prototype property named `$$verify`.
+This package should be installed **before** the root Vue instance creation. This process will inject a global component named `VAccess` and a prototype property named `$$auth`.
 
 ```ts
 import { init } from 'v-access'
@@ -176,9 +176,9 @@ This case would be useful when you want to create private routes that need to be
       | ability | `Ability` or `Ability[]` |  An ability or ability set that needs to be authenticated  |
       | strict  |        `boolean`         | Whether we should authenticate every abilities in the list |
 
-   1. `$$verify` object
+   1. `$$auth` object
 
-      `$$verify` objects are essentially an instance of `Set` subclass. It supports all [prototype functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set#Methods) of `Set`. The following table describes several extra authentication functions.
+      `$$auth` objects are essentially an instance of `Set` subclass. It supports all [prototype functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set#Methods) of `Set`. The following table describes several extra authentication functions.
 
       |  Function  |                Type                 |                           Description                           |
       | :--------: | :---------------------------------: | :-------------------------------------------------------------: |

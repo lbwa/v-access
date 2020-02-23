@@ -22,10 +22,10 @@ export default function VAccess(Vue: VueConstructor) {
       const vNodes = []
       const defaultSlots = slots().default
       const isValid = Array.isArray(props.ability)
-        ? parent.$$verify[props.strict ? 'verifyAll' : 'verifySome'](
+        ? parent.$$auth[props.strict ? 'verifyAll' : 'verifySome'](
             props.ability as Ability[]
           )
-        : parent.$$verify.has(props.ability as Ability)
+        : parent.$$auth.has(props.ability as Ability)
 
       if (isValid) {
         vNodes.push(...defaultSlots)

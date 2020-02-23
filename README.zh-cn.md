@@ -106,7 +106,7 @@ import VAccess from 'v-access'
 Vue.use(VAccess)
 ```
 
-在初始化 `vue` 的根实例之前应该首先完成插件安装。以上语句会在 `Vue` 的全局环境中注册一个名为 `VAccess` 的全局组件，并注入一个 `Vue` 的原型属性，名为 `$$verify`。
+在初始化 `vue` 的根实例之前应该首先完成插件安装。以上语句会在 `Vue` 的全局环境中注册一个名为 `VAccess` 的全局组件，并注入一个 `Vue` 的原型属性，名为 `$$auth`。
 
 ```ts
 import { init } from 'v-access'
@@ -176,9 +176,9 @@ export declare function init(
       | ability | `Ability` 或 `Ability[]` |  需要被验证的单个能力或能力集合  |
       | strict  |        `boolean`         | 是否验证给定能力集合中的所有能力 |
 
-   1. `$$verify` 对象
+   1. `$$auth` 对象
 
-      `$$verify` 对象本质上是 `Set` 子类的实例，故支持所有 `Set` 的[原型方法](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set#Methods)。以下表格描述了额外的功能函数。
+      `$$auth` 对象本质上是 `Set` 子类的实例，故支持所有 `Set` 的[原型方法](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set#Methods)。以下表格描述了额外的功能函数。
 
       |  Function  |                类型                 |            描述            |
       | :--------: | :---------------------------------: | :------------------------: |
