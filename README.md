@@ -13,9 +13,6 @@
   <a href="https://www.npmjs.com/package/v-access">
     <img alt="npm type definitions" src="https://img.shields.io/npm/types/v-access?logo=typescript&style=flat-square">
   </a>
-  <a href="https://github.com/lbwa/v-access/actions">
-    <img alt="Unit test workflow" src="https://github.com/lbwa/v-access/workflows/Unit%20test/badge.svg">
-  </a>
 </p>
 
 > An authentication solution based on Vue.js v2.x, including **elements-based** control and **route-based** control.
