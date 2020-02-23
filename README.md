@@ -13,366 +13,233 @@
   <a href="https://www.npmjs.com/package/v-access">
     <img alt="npm type definitions" src="https://img.shields.io/npm/types/v-access?logo=typescript&style=flat-square">
   </a>
-  <a href="https://github.com/lbwa/v-access/actions">
-    <img alt="Unit test workflow" src="https://github.com/lbwa/v-access/workflows/Unit%20test/badge.svg">
-  </a>
 </p>
 
-> An authorization solution for Vue v2.x, including **elements** control and **routes** control.
+> An authentication solution based on Vue.js v2.x, including **elements-based** control and **route-based** control.
 
 <p align="center">
-  <a href="./README.CN.md">中文指南</a>
+  <a href="./README.zh-cn.md">中文指南</a> | English
 </p>
 
-|                   Peer dependencies                    |                     Required                     |
-| :----------------------------------------------------: | :----------------------------------------------: |
-|        [vue](https://www.npmjs.com/package/vue)        |                        ✔️                        |
-| [vue-router](https://www.npmjs.com/package/vue-router) | Only required for `Vue.use(VAccess, { router })` |
+|                      Dependencies                      | Required |
+| :----------------------------------------------------: | :------: |
+|        [vue](https://www.npmjs.com/package/vue)        |    ✔️    |
+| [vue-router](https://www.npmjs.com/package/vue-router) |    ✔️    |
 
 ## Features
 
-- **Portable**: You only need to provide a current user access list without any complex initialization process, then `v-access` will provide all fully **element** and (or) **routes** access authorization functionalities.
+- **Minimal design**: Only one _ability/privilege_ list and give you all **element-based** and **route-based** authentications.
 
-- **Flexible**: Support any access data type with `id` field.
-
-- **Dynamic**: Support any private routes dynamic addition.
-
-- **Smooth**: Support dynamic routes reset **without any page reloading**.
-
-- **Various**: Support static and private(dynamic) routes authorization.
+- **Smooth changes**: Support any dynamic private routes addition and deletion **without page reloading**.
 
 ## Installation
 
 ```bash
-npm i v-access --save
+# using npm
+npm i v-access
+
+# using yarn
+yarn add v-access
 ```
 
 ## Prerequisites
 
-All authorization functionalities are based on an access **list** which should be provided by your back-end services (inspired by [GCP Cloud IAM](https://cloud.google.com/storage/docs/access-control/iam)). Every element in the list represents a permission (ability) which is used to access a kind of back-end service functionalities. One or multiple permissions can be contained by one user role.
-
-There is a best practice that uses syntax like `[scope].[module].[ability]` to represents the access of functionality, and `[scope]` is optional if you have no other external systems (scope).
-
-For example, any user access list including `account.read` represents current user has capability to access `account` service. There is a user role named `seller` would be made of `order.read` and `product.read`, which means any user includes `seller` role can access `order` service and `product` service. A user role is similar to the abilities set. System administrators would use user roles to distribute access abilities to low-level user. Any single access shouldn't be distributed directly.
-
-```ascii
-                          +--> access 1
-      +-----> user role 1 |
-      |                   +--> access 2
-      |
-      |                   +--> access 3
-user -+-----> user role 2 |
-      |                   +--> access 4
-      |
-      |                   +--> access 5
-      +-----> user role 3 |
-                          +--> access 6
-```
-
-The access name is up to you. Whatever you name your access elements, you should invoke [init](#initialization) function to pass the access list for `v-access` initialization.
-
-## Schema
-
-- **One access** of user access list should has following structure:
+- Ability type
 
   ```ts
-  interface Access {
-    // 'id' field is required
-    id: string
-    [key: string]: any
-  }
-
-  type AccessList = Access[]
+  type Ability = string
   ```
 
-- **One route** with access or weak access has specific structure in [here](#public-routes-authorization).
+- Routes type
+
+  ```ts
+  interface RouteWithAbility extends RouteConfig {
+    readonly children?: RouteWithAbility[]
+    readonly meta?: {
+      strict?: Ability[]
+      weak?: Ability[]
+      ability?: Ability
+      [key: string]: any
+    }
+  }
+  ```
+
+  More details could be found from [here](#Initialization).
+
+### Best practice
+
+> NOTICE: This section is only the best practice **recommendation, not required**.
+
+The entire authorization system is based on **an ability/privilege list** provided by any back-end services. Every element in the list represents an ability that is used to access the corresponding database. A _user role_ consists of multiple abilities, represents an _ability set_. One actual user could have multiple user roles.
+
+There is a best practice that uses syntax like `[scope].[module].[ability]` (eg. [IAM](https://cloud.google.com/storage/docs/access-control/iam)) to represents one ability. In this case, `[scope]` is optional if you have no other external systems (scope).
+
+The advantage of this design is that the role of multiple users or the ability of multiple roles can be intersected. Multiple abilities can be arbitrarily combined to form a **flexible abilities set**.
+
+The following chart represents an actual user's ability set:
+
+```
+                      +--> github.repo.read
+      +-> user role 1 |
+      |               +--> npm.org.import
+      |
+      |               +--> github.pull.read
+user -+-> user role 2 |
+      |               +--> npm.downloads.read
+      |
+      |               +--> github.action.read
+      +-> user role 3 |
+                      +--> npm.packages.publish
+```
+
+No matter what your ability name is, you should always call [init](#Initialization) function with a full ability list first.
 
 ## Initialization
 
-You **MUST** invoke `init` function which is belong to `Vue` prototype property named `$$auth` to pass current user **access list** before using `v-access` functionality.
-
-1.  If you only need basic functionality without routes access control:
-
-    ```ts
-    import Vue from 'vue'
-    import VAccess from 'v-access'
-
-    Vue.use(VAccess.Basic) // Be careful to handle capital letter
-    ```
-
-2.  If you need fully functionalities including element and routes access control:
-
-    ```ts
-    import Vue from 'vue'
-    import router from './router'
-    import VAccess from 'v-access'
-
-    // Vue-router instance is required if you pass VAccess into Vue.use
-    Vue.use(VAccess, { router })
-    ```
-
-The following code describes that passing access list when you have fetched access-list anywhere.
-
-```ts
-// In any vue instance
-fetchUserAccessList().then(({ list: userAccessList }: { list: Access[] }) =>
-  this.$$auth.init(userAccessList)
-)
-```
-
-## Element access control
-
-`v-access` has provided **2** way to implement element access control.
-
-1. `Vue` global component named `v-access`.
-
-1. Verification functions which belong to `Vue` prototype property named `$$auth`
-
-**NOTICE:** Global component `<v-access>` supports **multiple** child components.
-
-### Single verification
-
-Whether the current user has **ONE** access.
-
-- function
-
-```ts
-this.$$auth.has('accessNameA')
-```
-
-- global component
-
-```html
-<v-access access="accessNameA">
-  <main>Some content</main>
-</v-access>
-```
-
-### Weak verification
-
-Whether the current user has **AT LEAST ONE** access.
-
-- function
-
-```ts
-this.$$auth.weak(['accessNameA', 'accessNameB'])
-// or alias
-this.$$auth.weakList(['accessNameA', 'accessNameB'])
-```
-
-- global component
-
-```html
-<v-access :access="['accessNameA', 'accessNameA']">
-  <main>Some content</main>
-</v-access>
-```
-
-### Strict verification
-
-Whether the current user has **ALL** access.
-
-- function
-
-```ts
-this.$$auth.strict(['accessNameA', 'accessNameB'])
-// or alias
-this.$$auth.strictList(['accessNameA', 'accessNameB'])
-```
-
-- global component
-
-```html
-<!-- DO NOT forget to set 'strict' as props -->
-<v-access strict :access="['accessNameA', 'accessNameB']">
-  <main>Some content</main>
-</v-access>
-```
-
-### Access reset
-
-`v-access` has provided a reset function named `reset` which could be invoked to delete any access-list when the developer wants to rest current access container.
-
-## Routes access control
-
-If you want to implement routes access control based on `vue-router`, you should provide a `vue-router` instance and a preset routes first. Other options are optional.
-
-|  Option  |           Required            |       Data type        |                                                           Description                                                           |
-| :------: | :---------------------------: | :--------------------: | :-----------------------------------------------------------------------------------------------------------------------------: |
-|  router  |              ✔️               |      `VueRouter`       |                                                     A `vue-router` instance                                                     |
-|  routes  |        (default: `[]`)        |  `RouteWithAccess[]`   |                                              Preset routes list for access control                                              |
-| redirect | (default: `/@v-access-error`) |        `string`        |                                                 Occurred by unauthorized access                                                 |
-| exclude  |        (default: `[]`)        | `string[]` or `RegExp` | All of the routes matched `exclude` will skip authorization, even if it doesn't satisfy `access` or `weakAccess` field of route |
-
-[route-config]: https://router.vuejs.org/api/#routes
-
 ```ts
 import Vue from 'vue'
-import router, { routes } from './router'
+import VAccess from 'v-access'
 
-Vue.use(VAccess, { router, routes })
+Vue.use(VAccess)
 ```
 
-### Public routes authorization
+This package should be installed **before** the root Vue instance creation. This process will inject a global component named `VAccess` and a prototype property named `$$auth`.
 
-> Public static routes are passed by the developer when `vue-router` initialization.
+```ts
+import { init } from 'v-access'
 
-You only need to set `access` or `weakAccess` field of any routes if you want to authorize any public static routes.
+export default {
+  name: 'AnyComponent',
 
-1. Any element of `access` field MUST be satisfied, otherwise URL redirect will occur.
+  // ... omit all unrelated properties
 
-   > RouteConfig is a reference from official `vue-router` [documentation][route-config].
+  created() {
+    // a vuex action or http request
+    fetchAbilities(payload)
+      .then(list => list.map(abilityInfo => ability.name)) // ability serialization
+      .then(abilities =>
+        init(this, abilities, '/forbidden', [
+          /* routes which need to add to vue-router would be filtered by abilities first */
+        ])
+      )
+      .catch(console.error)
+  }
+}
+```
 
-   ```ts
-   interface PublicRoutesWithStrictAuth extends RouteConfig {
-     meta: {
-       access: string[]
-     }
-   }
-   ```
+No matter the original abilities structure is, you should always pass an `Ability identity` list (a `string[]` type) to `init` function for initializing global authentication functionality.
 
-   ```ts
-   {
-     path: '/private-routes',
-     component: () => import('@/views/Private'),
-     meta: {
-       access: [
-         'admin',
-         'mongo.read'
-       ]
-     }
-   }
-   ```
+```ts
+export declare function init(
+  vue: Vue,
+  abilities: Ability[],
+  redirect: string,
+  routes?: RouteWithAbility[]
+): void
+```
 
-1. Current authorization will pass if at least one has to be satisfied.
+NOTE: `redirect` only support a [fullPath](https://router.vuejs.org/api/#route-object-properties) string, not object type.
 
-   ```ts
-   interface PublicRouesWithWeakAuth extends RouteConfig {
-     meta: {
-       weakAccess: string[]
-     }
-   }
-   ```
+As you may have noticed, you can pass a global preset private routes collection to `init` function for dynamic routes addition. All valid private routes generation could be handled by this package and will be filtered by `abilities` set.
 
-   ```ts
-   {
-     path: '/private-routes',
-     component: () => import('@/views/Private'),
-     meta: {
-       weakAccess: [
-         'admin',
-         'mongo.read',
-         'sql.read'
-       ]
-     }
-   }
-   ```
+### Scenario
 
-**NOTICE：** Any routes without `access` or `weakAccess` fields will pass routes authorization by default.
+This case would be useful when you want to create private routes that need to be filtered by the current user abilities.
 
-### Private routes authorization
+## How to authenticate ability
 
-> Private dynamic routes are come from `Vue.use(VAccess, { router, routes }`.
+1. Using `element-based` authentication
 
-As mentioned above, The developer passes a preset private route list in `Vue.use`. The `v-access` will generate the final private routes based on the current user's **access-list** and added to the current `vue-router` instance.
+   1. `VAccess` component
 
-The data type of private routes provided by developer also supports `access` and `weakAccess` fields, the same as public routes.
+      ```html
+      <v-access :ability="['github.repo.read', 'github.repo.pull']">
+        <!-- any child components or HTML nodes -->
+      </v-access>
 
-1. Strict authorization, same as public routes
+      <!-- or -->
+      <v-access strict :ability="['github.repo.read', 'github.repo.pull']">
+        <!-- any child components or HTML nodes -->
+      </v-access>
 
-   ```ts
-   interface PrivateRoutesWithStrictAuth extends RouteConfig {
-     meta: {
-       access: string[]
-     }
-   }
-   ```
+      <!-- or -->
+      <v-access :ability="github.repo.read">
+        <!-- any child components or HTML nodes -->
+      </v-access>
+      ```
 
-   ```ts
-   {
-     path: '/private-routes',
-     component: () => import('@/views/Private'),
-     meta: {
-       // This routes will be added when all elements have been satisfied
-       access: [
-         'admin',
-         'mongo.read'
-       ]
-     }
-   }
-   ```
+      |  Props  |           Type           |                        Description                         |
+      | :-----: | :----------------------: | :--------------------------------------------------------: |
+      | ability | `Ability` or `Ability[]` |  An ability or ability set that needs to be authenticated  |
+      | strict  |        `boolean`         | Whether we should authenticate every abilities in the list |
 
-1. Weak authorization, same as public routes
+   1. `$$auth` object
+
+      `$$auth` objects are essentially an instance of `Set` subclass. It supports all [prototype functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set#Methods) of `Set`. The following table describes several extra authentication functions.
+
+      |  Function  |                Type                 |                           Description                           |
+      | :--------: | :---------------------------------: | :-------------------------------------------------------------: |
+      | verifyAll  | `(abilities: Ability[]) => boolean` |    Whether we should authenticate every ability in the list     |
+      | verifySome | `(abilities: Ability[]) => boolean` | Whether we should authenticate at least one ability in the list |
+
+1. Using `route-based` authentication
 
    ```ts
-   interface PrivateRoutesWithWeakAuth extends RouteConfig {
-     meta: {
-       weakAccess: string[]
+   const routes = [
+     // This route always pass authentication
+     {
+       name: 'PublicRoutes',
+       path: '/public',
+       component: () =>
+         import(/* webpackChunkName: 'page-public' */ './views/Public.vue')
+     },
+     {
+       name: 'PrivateRoutes',
+       path: '/private',
+       component: () =>
+         import(/* webpackChunkName: 'page-private' */ './views/Private.vue'),
+       meta: {
+         strict: ['github.repo.read', 'github.repo.pull']
+         // or
+         // weak: ['github.repo.read', 'github.repo.pull'],
+         // or
+         // ability: 'github.repo.read'
+       }
      }
-   }
+   ]
    ```
 
-   ```ts
-   {
-     path: '/private-routes',
-     component: () => import('@/views/Private'),
-     // This routes will be added when at least one element has been satisfied
-     meta: {
-       weakAccess: [
-         'admin',
-         'mongo.read',
-         'sql.read'
-       ]
-     }
-   }
-   ```
+   | Meta prop |                            Objective                            |
+   | :-------: | :-------------------------------------------------------------: |
+   | `strict`  |    Whether we should authenticate every ability in the list     |
+   |  `weak`   | Whether we should authenticate at least one ability in the list |
+   | `ability` |         A single ability that needs to be authenticated         |
 
-### Routes reset
+## Reset
 
-As with [access resets](#access-reset), the current access container will be reset without page reloading when developer calls `this.$$auth.reset()` with `Vue.use(VAccess, options)`.
+```ts
+export declare function reset(router: VueRouter): void
+```
+
+You should always use `reset(theCurrentRouterInstance)` to delete all private routes added by `init` function without any page reloading.
+
+```ts
+import { reset } from 'v-access'
+
+reset(this.$router)
+```
 
 ## With other hooks
 
-[Separation of concerns](https://en.wikipedia.org/wiki/Separation_of_concerns) is a design principle for separating distinct parts, and implement the high cohesion and low coupling between multiple independent parts. [router.beforeEach] navigation guard accepts **multiple** hooks to implement a navigation pipe. This is the theoretical basis for `v-access` implementation. `v-access` has provided a solution for separating `authorizer` part. Developers couldn't care about how `authorizer` works anymore.
+[Separation of concerns](https://en.wikipedia.org/wiki/Separation_of_concerns) is a design principle for separating distinct parts, and implement the high cohesion and low coupling between multiple independent parts. [Vue router navigation guard][doc-router-beforeeach] accepts **multiple** hooks to implement a navigation pipeline via this principle. This is the theoretical basis for `v-access` implementation. `v-access` has provided an `authorizer` as a `beforeEach` guard.
 
-According to the above description, you can just pass other hooks into [router.beforeEach] if you need to add extra logic for navigation control.
+If you aren't familiar with how multiple global `beforeEach` hooks work, I strongly recommend you to read [the documentation][doc-router-beforeeach] about `router.beforeEach`.
 
-```js
-/* src/router/index.js */
-const router = new VueRouter({
-  // Omit options
-})
-
-/**
- * This part is your other navigation hook.
- * v-access doesn't care about whether extra hooks has been passed by the
- * developer, and only care about its **authorizer** works.
- */
-router.beforeEach((to, from, next) => {
-  /* Anything you want to do */
-})
-
-export default router
-```
-
-```js
-/* src/plugins/v-access.js */
-import Vue from 'vue'
-import VAccess from 'v-access'
-import router from '../router'
-
-const routes = [/* Omit routes */]
-
-Vue.use(VAccess, { router, routes }))
-```
-
-If you aren't familiar with how multiple global before hooks work, I strongly recommend you to read the documentation about [router.beforeEach].
-
-[router.beforeeach]: https://router.vuejs.org/guide/advanced/navigation-guards.html#global-before-guards
+[doc-router-beforeeach]: https://router.vuejs.org/guide/advanced/navigation-guards.html#global-before-guards
 
 ## Changelog
 
-All notable changes to this project will be documented in [CHANGELOG](./CHANGELOG.md) file.
+All notable changes to this package will be documented in [CHANGELOG](./CHANGELOG.md) file.
 
 ## License
 

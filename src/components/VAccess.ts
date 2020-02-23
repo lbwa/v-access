@@ -1,11 +1,14 @@
+import { Ability } from 'src/core/ability'
 import { CreateElement, VueConstructor } from 'vue'
 
 export default function VAccess(Vue: VueConstructor) {
   return Vue.extend({
     name: 'VAccess',
 
+    functional: true,
+
     props: {
-      access: {
+      ability: {
         type: [Array, String],
         required: true
       },
@@ -15,19 +18,20 @@ export default function VAccess(Vue: VueConstructor) {
       }
     },
 
-    render(h: CreateElement) {
-      if (Array.isArray(this.access)) {
-        return (this.strict
-        ? this.$$auth.strictList(this.access as string[])
-        : this.$$auth.weakList(this.access as string[]))
-          ? h('div', { class: 'v-access' }, this.$slots.default)
-          : h()
+    render(h: CreateElement, { props, slots, parent }) {
+      const vNodes = []
+      const defaultSlots = slots().default
+      const isValid = Array.isArray(props.ability)
+        ? parent.$$auth[props.strict ? 'verifyAll' : 'verifySome'](
+            props.ability as Ability[]
+          )
+        : parent.$$auth.has(props.ability as Ability)
+
+      if (isValid) {
+        vNodes.push(...defaultSlots)
       }
 
-      if (this.$$auth.has(this.access)) {
-        return h('div', { class: 'v-access' }, this.$slots.default)
-      }
-      return h()
+      return vNodes
     }
   })
 }

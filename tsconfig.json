@@ -12,7 +12,8 @@
       "dom"
     ],
     "strict": true,
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "sourceMap": true
   },
   "include": [
     "src/**/*.ts",
