@@ -12,10 +12,7 @@ import {
 export { Ability } from './core/ability'
 export { RouteWithAbility } from './core/routes'
 
-let isInitialized = false
-const abilitiesRef: Record<'current', AbilitiesSet | null> = {
-  current: null
-}
+let abilitiesSet: AbilitiesSet = AbilitiesSet.create([])
 
 function isString(val: any): val is string {
   return typeof val === 'string'
@@ -34,7 +31,7 @@ export default {
 
     Object.defineProperty(Vue.prototype, '$$auth', {
       get() {
-        return abilitiesRef.current
+        return abilitiesSet
       }
     })
   }
@@ -53,15 +50,14 @@ export function init(
     )}.`
   )
   invariant(
-    !isInitialized,
+    !abilitiesSet.size,
     `
   You are trying to init multiple times.
   You should call "reset(theCurrentRouterInstance)" function first if you want to update global ability set.
   `
   )
-  isInitialized = true
 
-  abilitiesRef.current = AbilitiesSet.create(abilities)
+  abilitiesSet = AbilitiesSet.create(abilities)
 
   let router: VueRouter
   if (isVue(instance)) {
@@ -76,13 +72,12 @@ export function init(
     router = instance
   }
 
-  addRoutes(router, routes, abilitiesRef.current)
-  router.beforeEach(registerAuthorizer(redirect, abilitiesRef.current))
+  addRoutes(router, routes, abilitiesSet)
+  router.beforeEach(registerAuthorizer(redirect, abilitiesSet))
 }
 
 export function reset(router: VueRouter) {
   invariant(router, 'Should provide a vue-router instance.')
   removeRoutes(router)
-  isInitialized = false
-  abilitiesRef.current = null
+  abilitiesSet = AbilitiesSet.create([])
 }
