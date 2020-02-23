@@ -19,6 +19,13 @@ function isString(val: any): val is string {
   return typeof val === 'string'
 }
 
+function isVue(val: object): val is Vue {
+  return (
+    Object.hasOwnProperty.call(val, '_isVue') &&
+    (val as Record<'_isVue', boolean>)._isVue
+  )
+}
+
 export default {
   install(Vue: VueConstructor) {
     Vue.component('VAccess', registerVAComponent(Vue))
@@ -32,33 +39,43 @@ export default {
 }
 
 export function init(
-  vue: Vue,
+  instance: Vue | VueRouter,
   abilities: Ability[],
   redirect: string,
   routes: RouteWithAbility[] = []
 ) {
   invariant(
-    isString(redirect),
+    isString(redirect) && /^\/./.test(redirect),
     `"Redirect" MUST be a vue-router fullPath (string type) and we got ${Object.prototype.toString.call(
       redirect
     )}.`
   )
-  if (isInitialized) return
+  invariant(
+    !isInitialized,
+    `
+  You are trying to init multiple times.
+  You should call "reset(theCurrentRouterInstance)" function first if you want to update global ability set.
+  `
+  )
   isInitialized = true
 
   abilitiesRef.current = AbilitiesSet.create(abilities)
 
-  let _root = vue
-  while (!_root.$options.router && _root.$parent) {
-    _root = _root.$parent
+  let router: VueRouter
+  if (isVue(instance)) {
+    let current = instance
+    while (!current.$options.router && current.$parent) {
+      current = current.$parent
+    }
+
+    invariant(current.$options.router, 'Should work with vue-router')
+    router = current.$options.router
+  } else {
+    router = instance
   }
 
-  invariant(_root.$options.router, 'Should work with vue-router')
-
-  addRoutes(_root.$options.router!, routes, abilitiesRef.current)
-  _root.$options.router!.beforeEach(
-    registerAuthorizer(redirect, abilitiesRef.current)
-  )
+  addRoutes(router, routes, abilitiesRef.current)
+  router.beforeEach(registerAuthorizer(redirect, abilitiesRef.current))
 }
 
 export function reset(router: VueRouter) {
