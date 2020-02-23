@@ -9,6 +9,8 @@ import {
   removeRoutes,
   RouteWithAbility
 } from './core/routes'
+export { Ability } from './core/ability'
+export { RouteWithAbility } from './core/routes'
 
 let isInitialized = false
 const abilitiesRef: Record<'current', AbilitiesSet | null> = {
