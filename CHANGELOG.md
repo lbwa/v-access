@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0](https://github.com/lbwa/v-access/compare/v0.3.1...v1.0.0) (2020-02-23)
+
+
+### Features
+
+* **core:** ensure any external `map` mutation is invalid ([a86c396](https://github.com/lbwa/v-access/commit/a86c396961b82462a0fef91befc60ec7b76c982c))
+* **defineReactive:** declare Vue.util.defineReactive ([a11cac6](https://github.com/lbwa/v-access/commit/a11cac69c855fbf09a324c20ca76f912834cdd06))
+* **install:** prevent multiple init calling ([1a4ed6e](https://github.com/lbwa/v-access/commit/1a4ed6eddcc014d00bb169e3217a4038a857cbe4))
+* **map:** only make auth.map reactive ([7e25515](https://github.com/lbwa/v-access/commit/7e255155526ece21bb53bab8c29e2cbcd86ab12f))
+* **redirect:** always should pass `redirect` string ([4dd91ec](https://github.com/lbwa/v-access/commit/4dd91ec5b07735d4dcc50ce8632e367a819cbb54))
+* **reset:** impl reset routes ([b3d4fa2](https://github.com/lbwa/v-access/commit/b3d4fa2a0e53f0cd556da7ea8ef370975cb67303))
+* **VAccess:** make VAccess component functional ([4d1d916](https://github.com/lbwa/v-access/commit/4d1d916c61e701642fa6cd19be8b73799a3d2e55))
+* remove install export ([b8c4cbc](https://github.com/lbwa/v-access/commit/b8c4cbcce3b605a5d5ddd4a4ee4e549753b6240f))
+
+
+### Bug Fixes
+
+* **type:** extend route.meta.xx type ([97833d9](https://github.com/lbwa/v-access/commit/97833d9753133f32872c7639e76382d35036c59b))
+
 ### [0.3.1](https://github.com/lbwa/v-access/compare/v0.3.0...v0.3.1) (2019-09-26)
 
 
