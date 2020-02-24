@@ -9,14 +9,11 @@ import {
   removeRoutes,
   RouteWithAbility
 } from './core/routes'
+import { isString } from './shared/utils'
 export { Ability } from './core/ability'
 export { RouteWithAbility } from './core/routes'
 
-let abilitiesSet: AbilitiesSet = AbilitiesSet.create([])
-
-function isString(val: any): val is string {
-  return typeof val === 'string'
-}
+const abilitiesSet: AbilitiesSet = new AbilitiesSet()
 
 function isVue(val: object): val is Vue {
   return (
@@ -31,33 +28,33 @@ export default {
 
     Object.defineProperty(Vue.prototype, '$$auth', {
       get() {
-        return abilitiesSet
+        return abilitiesSet.external
       }
     })
   }
 }
 
-export function init(
-  instance: Vue | VueRouter,
-  abilities: Ability[],
-  redirect: string,
-  routes: RouteWithAbility[] = []
-) {
+interface InitOptions {
+  instance: Vue | VueRouter
+  abilities: Ability[]
+  redirect: string
+  routes?: RouteWithAbility[]
+}
+
+export function init({
+  instance,
+  abilities,
+  redirect,
+  routes = []
+}: InitOptions) {
   invariant(
     isString(redirect) && /^\/./.test(redirect),
     `"Redirect" MUST be a vue-router fullPath (string type) and we got ${Object.prototype.toString.call(
       redirect
     )}.`
   )
-  invariant(
-    !abilitiesSet.size,
-    `
-  You are trying to init multiple times.
-  You should call "reset(theCurrentRouterInstance)" function first if you want to update global ability set.
-  `
-  )
 
-  abilitiesSet = AbilitiesSet.create(abilities)
+  abilitiesSet.assign(abilities)
 
   let router: VueRouter
   if (isVue(instance)) {
@@ -79,5 +76,5 @@ export function init(
 export function reset(router: VueRouter) {
   invariant(router, 'Should provide a vue-router instance.')
   removeRoutes(router)
-  abilitiesSet = AbilitiesSet.create([])
+  abilitiesSet.clear()
 }
