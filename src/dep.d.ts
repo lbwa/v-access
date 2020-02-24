@@ -2,7 +2,7 @@ import { AbilitiesSet } from './core/ability'
 
 declare module 'vue/types/vue' {
   interface Vue {
-    readonly $$auth: AbilitiesSet
+    readonly $$auth: AbilitiesSet['external']
   }
 }
 
