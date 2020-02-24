@@ -13,7 +13,7 @@ import { isString } from './shared/utils'
 export { Ability } from './core/ability'
 export { RouteWithAbility } from './core/routes'
 
-const abilitiesSet: AbilitiesSet = new AbilitiesSet()
+let abilitiesSet: AbilitiesSet | null = null
 
 function isVue(val: object): val is Vue {
   return (
@@ -26,27 +26,29 @@ export default {
   install(Vue: VueConstructor) {
     Vue.component('VAccess', registerVAComponent(Vue))
 
+    abilitiesSet = new AbilitiesSet(Vue)
+
     Object.defineProperty(Vue.prototype, '$$auth', {
       get() {
-        return abilitiesSet.external
+        return abilitiesSet!.external
       }
     })
   }
 }
 
 interface InitOptions {
-  instance: Vue | VueRouter
+  vm: Vue | VueRouter
   abilities: Ability[]
   redirect: string
   routes?: RouteWithAbility[]
 }
 
-export function init({
-  instance,
-  abilities,
-  redirect,
-  routes = []
-}: InitOptions) {
+export function init({ vm, abilities, redirect, routes = [] }: InitOptions) {
+  invariant(vm, 'MUST has a Vue/VueRouter instance as vm.')
+  invariant(
+    abilitiesSet,
+    'MUST call Vue.use(VAccess) before starting initialization.'
+  )
   invariant(
     isString(redirect) && /^\/./.test(redirect),
     `"Redirect" MUST be a vue-router fullPath (string type) and we got ${Object.prototype.toString.call(
@@ -57,8 +59,8 @@ export function init({
   abilitiesSet.assign(abilities)
 
   let router: VueRouter
-  if (isVue(instance)) {
-    let current = instance
+  if (isVue(vm)) {
+    let current = vm
     while (!current.$options.router && current.$parent) {
       current = current.$parent
     }
@@ -66,7 +68,7 @@ export function init({
     invariant(current.$options.router, 'Should work with vue-router')
     router = current.$options.router
   } else {
-    router = instance
+    router = vm
   }
 
   addRoutes(router, routes, abilitiesSet)
@@ -74,6 +76,10 @@ export function init({
 }
 
 export function reset(router: VueRouter) {
+  invariant(
+    abilitiesSet,
+    'MUST call Vue.use(VAccess) before starting initialization.'
+  )
   invariant(router, 'Should provide a vue-router instance.')
   removeRoutes(router)
   abilitiesSet.clear()

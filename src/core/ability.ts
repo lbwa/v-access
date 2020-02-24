@@ -1,4 +1,5 @@
 import { isString } from 'src/shared/utils'
+import { VueConstructor } from 'vue'
 
 export type Ability = string
 
@@ -12,19 +13,7 @@ export type Ability = string
  * @link https://github.com/mobxjs/mobx/issues/1556
  */
 export class AbilitiesSet {
-  private _set: Set<Ability> = new Set()
-
-  get external() {
-    return {
-      has: (ability: Ability) => this.has(ability),
-      verifyAll: (abilities: Ability[]) => this.verifyAll(abilities),
-      verifySome: (abilities: Ability[]) => this.verifySome(abilities)
-    }
-  }
-
-  get size() {
-    return this._set.size
-  }
+  private _vm: Vue
 
   private _iterator(type: 'some' | 'every', abilities: Ability[]) {
     if (Array.isArray(abilities)) {
@@ -36,8 +25,38 @@ export class AbilitiesSet {
     return false
   }
 
+  constructor(Vue: VueConstructor) {
+    this._vm = new Vue({
+      data() {
+        return {
+          state: new Set<Ability>()
+        }
+      }
+    })
+  }
+
+  get external() {
+    return {
+      has: (ability: Ability) => this.has(ability),
+      verifyAll: (abilities: Ability[]) => this.verifyAll(abilities),
+      verifySome: (abilities: Ability[]) => this.verifySome(abilities)
+    }
+  }
+
+  get state(): Set<Ability> {
+    return this._vm.$data.state
+  }
+
+  set state(val: Set<Ability>) {
+    this._vm.$data.state = val
+  }
+
+  get size() {
+    return this.state.size
+  }
+
   assign(abilities: Ability[]) {
-    this._set = new Set(abilities)
+    this.state = new Set(abilities)
   }
 
   clear() {
@@ -45,7 +64,7 @@ export class AbilitiesSet {
   }
 
   has(ability: Ability) {
-    return this._set.has(ability)
+    return this.state.has(ability)
   }
 
   verifyAll(abilities: Ability[]) {
