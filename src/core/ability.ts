@@ -25,6 +25,12 @@ export class AbilitiesSet {
     return false
   }
 
+  /**
+   * How we make state reactive?
+   * https://github.com/vuejs/vuex/blob/v3.1.2/src/store.js#L60-L62
+   * https://github.com/vuejs/vuex/blob/v3.1.2/src/store.js#L271-L281
+   * @param Vue
+   */
   constructor(Vue: VueConstructor) {
     this._vm = new Vue({
       data() {
