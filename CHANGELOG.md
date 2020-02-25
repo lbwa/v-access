@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0](https://github.com/lbwa/v-access/compare/v1.0.0...v2.0.0) (2020-02-25)
+
+
+### Features
+
+* **ability:** make AbilitySet reactive based on Vue instance ([b9cda02](https://github.com/lbwa/v-access/commit/b9cda025ccd56cd4c3e3ca7d7c66eabc13ddbc2e))
+* **Ability:** Don't use Set subclass anymore ([7c89a30](https://github.com/lbwa/v-access/commit/7c89a3062233f9b5dccf421531947e025de35c7e))
+* **init:** also support VueRouter directly ([10c836f](https://github.com/lbwa/v-access/commit/10c836f7987a2614e4b55c80310e0a0dfdd7ed6e))
+* **init:** set default abilitiesRef ([74ebf29](https://github.com/lbwa/v-access/commit/74ebf29df66ec70752908904b7399d149095c65d))
+
 ## [1.0.0](https://github.com/lbwa/v-access/compare/v0.3.1...v1.0.0) (2020-02-23)
 
 ### Features
