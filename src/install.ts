@@ -76,10 +76,7 @@ export function init({ vm, abilities, redirect, routes = [] }: InitOptions) {
 }
 
 export function reset(router: VueRouter) {
-  invariant(
-    abilitiesSet,
-    'MUST call Vue.use(VAccess) before starting initialization.'
-  )
+  invariant(abilitiesSet, 'MUST call init function first.')
   invariant(router, 'Should provide a vue-router instance.')
   removeRoutes(router)
   abilitiesSet.clear()
