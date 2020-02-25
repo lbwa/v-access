@@ -52,6 +52,8 @@ yarn add v-access
   type Ability = string
   ```
 
+  能力值应该是一个具有 **全局唯一性** 的字符串标识。
+
 - 路由类型
 
   ```ts
@@ -120,9 +122,14 @@ export default {
     fetchAbilities(payload)
       .then(list => list.map(abilityInfo => ability.name)) // 序列化能力集合
       .then(abilities =>
-        init(this, abilities, '/forbidden', [
-          /* 任意全局预设私有路由集合。该集合首先会根据当前能力集合过滤，再添加到全局路由中 */
-        ])
+        init({
+          vm: this, // or this.$router
+          abilities,
+          redirect: '/forbidden',
+          routes: [
+            /* 任意全局预设私有路由集合。该集合首先会根据当前能力集合过滤，再添加到全局路由中 */
+          ]
+        })
       )
       .catch(console.error)
   }
@@ -132,12 +139,19 @@ export default {
 无论原始的能力值结构如何，你应该始终向 `init` 函数传递一个能力值的唯一标识列表（一个 `string[]` 类型）来完成全局的鉴权功能初始化。
 
 ```ts
-export declare function init(
-  vue: Vue,
-  abilities: Ability[],
-  redirect: string,
+interface InitOptions {
+  vm: Vue | VueRouter
+  abilities: Ability[]
+  redirect: string
   routes?: RouteWithAbility[]
-): void
+}
+
+export declare function init({
+  vm,
+  abilities,
+  redirect,
+  routes
+}: InitOptions): void
 ```
 
 注意：`redirect` 仅仅支持一个 [fullPath](https://router.vuejs.org/api/#route-object-properties) 字符串，并不支持路由定义对象。
@@ -151,6 +165,8 @@ export declare function init(
 ## 如何验证能力
 
 1. 使用基于元素的鉴权
+
+   以下两种鉴权方式的结果都是 **响应式** 的。
 
    1. `VAccess` 组件
 
