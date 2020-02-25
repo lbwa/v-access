@@ -50,6 +50,8 @@ yarn add v-access
   type Ability = string
   ```
 
+  `Ability` should be a **global unique** identifier and _string_ type.
+
 - Routes type
 
   ```ts
@@ -118,9 +120,14 @@ export default {
     fetchAbilities(payload)
       .then(list => list.map(abilityInfo => ability.name)) // ability serialization
       .then(abilities =>
-        init(this, abilities, '/forbidden', [
-          /* routes which need to add to vue-router would be filtered by abilities first */
-        ])
+        init({
+          vm: this, // or this.$router
+          abilities,
+          redirect: '/forbidden',
+          routes: [
+            /* routes which need to add to vue-router would be filtered by abilities first */
+          ]
+        })
       )
       .catch(console.error)
   }
@@ -130,12 +137,19 @@ export default {
 No matter the original abilities structure is, you should always pass an `Ability identity` list (a `string[]` type) to `init` function for initializing global authentication functionality.
 
 ```ts
-export declare function init(
-  vue: Vue,
-  abilities: Ability[],
-  redirect: string,
+interface InitOptions {
+  vm: Vue | VueRouter
+  abilities: Ability[]
+  redirect: string
   routes?: RouteWithAbility[]
-): void
+}
+
+export declare function init({
+  vm,
+  abilities,
+  redirect,
+  routes
+}: InitOptions): void
 ```
 
 NOTE: `redirect` only support a [fullPath](https://router.vuejs.org/api/#route-object-properties) string, not object type.
@@ -149,6 +163,8 @@ This case would be useful when you want to create private routes that need to be
 ## How to authenticate ability
 
 1. Using `element-based` authentication
+
+   The results of the following two authentication ways are **reactive**.
 
    1. `VAccess` component
 
