@@ -191,10 +191,11 @@ This case would be useful when you want to create private routes that need to be
 
    1. `$$auth` object
 
-      `$$auth` objects are essentially an instance of `Set` subclass. It supports all [prototype functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set#Methods) of `Set`. The following table describes several extra authentication functions.
+      The following table describes several `$$auth` authentication functions.
 
       |  Function  |                Type                 |                           Description                           |
       | :--------: | :---------------------------------: | :-------------------------------------------------------------: |
+      |    has     |   `(ability: Ability) => boolean`   |            An ability that needs to be authenticated            |
       | verifyAll  | `(abilities: Ability[]) => boolean` |    Whether we should authenticate every ability in the list     |
       | verifySome | `(abilities: Ability[]) => boolean` | Whether we should authenticate at least one ability in the list |
 

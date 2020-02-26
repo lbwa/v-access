@@ -193,10 +193,11 @@ export declare function init({
 
    1. `$$auth` 对象
 
-      `$$auth` 对象本质上是 `Set` 子类的实例，故支持所有 `Set` 的[原型方法](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set#Methods)。以下表格描述了额外的功能函数。
+      以下表格描述了 `$$auth` 所具有的功能函数。
 
       |  Function  |                类型                 |            描述            |
       | :--------: | :---------------------------------: | :------------------------: |
+      |    has     |   `(ability: Ability) => boolean`   |   是否满足特定的单一能力   |
       | verifyAll  | `(abilities: Ability[]) => boolean` | 验证是否满足所有给定的能力 |
       | verifySome | `(abilities: Ability[]) => boolean` |  验证是否满足至少一项能力  |
 
