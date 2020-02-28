@@ -1,6 +1,7 @@
 import Vue from 'vue'
-import { addRoutes, removeRoutes } from '../src/core/routes'
+import { addRoutes, removeRoutes, registerAuthorizer } from '../src/core/routes'
 import { AbilitiesSet } from '../src/core/ability'
+import { NavigationGuard, Location, Route } from 'vue-router'
 
 describe('routes', () => {
   describe('addRoutes', () => {
@@ -112,15 +113,15 @@ describe('routes', () => {
       expect(router.addRoutes.mock.calls[0][0]).toEqual(expectedRoutes)
     })
 
-    it('Should remove routes and rest flag', () => {
+    it('Should remove routes and reset flag', () => {
       removeRoutes(router)
-      expect(prototype.constructor.mock.calls.length).toEqual(1)
+      expect(prototype.constructor).toBeCalledTimes(1)
     })
 
     it('Should add routes only once', () => {
       addRoutes(router, [], abilitiesSet)
       addRoutes(router, [], abilitiesSet)
-      expect(router.addRoutes.mock.calls.length).toEqual(1)
+      expect(router.addRoutes).toBeCalledTimes(1)
       removeRoutes(router)
     })
 
@@ -129,6 +130,67 @@ describe('routes', () => {
         addRoutes(router, '[]' as any, abilitiesSet)
       }).toThrowError('Routes must be a RouteConfig list.')
       removeRoutes(router)
+    })
+  })
+
+  describe('Authorizer', () => {
+    const redirect = '/forbidden'
+    const abilities = ['github.repo.read', 'github.repo.write']
+    const abilitiesSet = new AbilitiesSet(Vue)
+    abilitiesSet.assign(abilities)
+
+    let guard: NavigationGuard
+    let next: jest.Mock
+
+    beforeEach(() => {
+      spyOn(console, 'log')
+      guard = registerAuthorizer(redirect, abilitiesSet)
+      next = jest.fn()
+    })
+
+    it('Should create a navigation guard', () => {
+      expect(guard).toBeInstanceOf(Function)
+    })
+
+    it('Should pass navigation with redirect path', () => {
+      guard(
+        {
+          fullPath: redirect
+        } as Route,
+        {} as Route,
+        next
+      )
+      expect(next).toBeCalledTimes(1)
+      expect(next.mock.calls[0].length).toEqual(0)
+    })
+
+    it('Should pass navigation with a correct ability', () => {
+      guard(
+        {
+          fullPath: '/universal',
+          meta: { ability: abilities[0] }
+        } as Route,
+        {} as Route,
+        next
+      )
+      expect(next).toBeCalledTimes(1)
+      expect(next.mock.calls[0].length).toEqual(0)
+    })
+
+    it('Should abort navigation and navigate to redirect path', () => {
+      guard(
+        {
+          fullPath: '/should-be-reject',
+          meta: { ability: 'npm.org.add' }
+        } as any,
+        {} as any,
+        next
+      )
+      expect(next).toBeCalledTimes(1)
+      expect(next.mock.calls[0].length).toEqual(1)
+      expect(next.mock.calls[0][0]).toEqual(
+        `${redirect}?from=/should-be-reject`
+      )
     })
   })
 })
