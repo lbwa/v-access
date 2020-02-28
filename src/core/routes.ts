@@ -34,7 +34,9 @@ export function addRoutes(
       if (verifyRoute(route, abilitiesSet)) {
         if (shallow.children) {
           shallow.children = createRoutes(shallow.children)
-        } else {
+        }
+
+        if (!shallow.children || shallow.children.length) {
           list.push(shallow)
         }
       }
