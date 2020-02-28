@@ -35,14 +35,6 @@ export class AbilitiesSet {
     })
   }
 
-  get external() {
-    return {
-      has: (ability: Ability) => this.has(ability),
-      verifyAll: (abilities: Ability[]) => this.verifyAll(abilities),
-      verifySome: (abilities: Ability[]) => this.verifySome(abilities)
-    }
-  }
-
   get state(): Set<Ability> {
     return this._vm.$data.state
   }

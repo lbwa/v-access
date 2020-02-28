@@ -29,8 +29,15 @@ export default {
     abilitiesSet = new AbilitiesSet(Vue)
 
     Object.defineProperty(Vue.prototype, '$$auth', {
+      enumerable: true,
       get() {
-        return abilitiesSet!.external
+        return {
+          has: (ability: Ability) => abilitiesSet!.has(ability),
+          verifyAll: (abilities: Ability[]) =>
+            abilitiesSet!.verifyAll(abilities),
+          verifySome: (abilities: Ability[]) =>
+            abilitiesSet!.verifySome(abilities)
+        }
       }
     })
   }
