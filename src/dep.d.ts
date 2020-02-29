@@ -1,8 +1,8 @@
-import { AbilitiesSet } from './core/ability'
+import { AuthMethods } from './install'
 
 declare module 'vue/types/vue' {
   interface Vue {
-    readonly $$auth: AbilitiesSet['external']
+    readonly $$auth: AuthMethods
   }
 }
 

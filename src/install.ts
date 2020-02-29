@@ -13,6 +13,12 @@ import { isString } from './shared/utils'
 export { Ability } from './core/ability'
 export { RouteWithAbility } from './core/routes'
 
+export type AuthMethods = {
+  has: AbilitiesSet['has']
+  verifyAll: AbilitiesSet['verifyAll']
+  verifySome: AbilitiesSet['verifySome']
+}
+
 let abilitiesSet: AbilitiesSet | null = null
 
 function isVue(val: object): val is Vue {
@@ -30,7 +36,7 @@ export default {
 
     Object.defineProperty(Vue.prototype, '$$auth', {
       enumerable: true,
-      get() {
+      get(): AuthMethods {
         return {
           has: (ability: Ability) => abilitiesSet!.has(ability),
           verifyAll: (abilities: Ability[]) =>
