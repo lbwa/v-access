@@ -67,13 +67,8 @@ export function init({ vm, abilities, redirect, routes = [] }: InitOptions) {
 
   let router: VueRouter
   if (isVue(vm)) {
-    let current = vm
-    while (!current.$options.router && current.$parent) {
-      current = current.$parent
-    }
-
-    invariant(current.$options.router, 'Should work with vue-router')
-    router = current.$options.router
+    invariant(vm.$root.$options.router, 'Should work with vue-router')
+    router = vm.$root.$options.router
   } else {
     router = vm
   }
