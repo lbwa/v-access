@@ -1,5 +1,5 @@
 import { AbilitiesSet } from '../src/core/ability'
-import Vue from 'Vue'
+import Vue from 'vue'
 
 describe('AbilitiesSet', () => {
   let abilitiesSet: AbilitiesSet
