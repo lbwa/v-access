@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+### [2.0.1](https://github.com/lbwa/v-access/compare/v2.0.0...v2.0.1) (2020-02-29)
+
+
+### Features
+
+* remove AbilitiesSet.external ([01bdcaf](https://github.com/lbwa/v-access/commit/01bdcaf5b4bd399e438c22a1e295e0aa743eb9d1))
+
+
+### Bug Fixes
+
+* **routes:** nested routes should be added ([b61bfd9](https://github.com/lbwa/v-access/commit/b61bfd9d1cfd97b14a4f7067efb5feca446be46a))
+
 ## [2.0.0](https://github.com/lbwa/v-access/compare/v1.0.0...v2.0.0) (2020-02-25)
 
 

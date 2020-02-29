@@ -1,6 +1,6 @@
 {
   "name": "v-access",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "An authorization solutions for Vue.js v2.x.",
   "main": "dist/v-access.cjs.development.js",
   "module": "dist/v-access.esm.development.js",
