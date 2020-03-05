@@ -1,11 +1,3 @@
-import { AuthMethods } from './install'
-
-declare module 'vue/types/vue' {
-  interface Vue {
-    readonly $$auth: AuthMethods
-  }
-}
-
 declare module 'vue-router/types/router' {
   interface VueRouter {
     options: RouterOptions
@@ -21,3 +13,5 @@ declare module 'vue-router/types/router' {
     }
   }
 }
+
+export {}
