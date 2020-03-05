@@ -19,6 +19,12 @@ export type AuthMethods = {
   verifySome: AbilitiesSet['verifySome']
 }
 
+declare module 'vue/types/vue' {
+  interface Vue {
+    readonly $$auth: AuthMethods
+  }
+}
+
 let abilitiesSet: AbilitiesSet | null = null
 
 function isVue(val: object): val is Vue {
@@ -79,8 +85,8 @@ export function init({ vm, abilities, redirect, routes = [] }: InitOptions) {
     router = vm
   }
 
-  addRoutes(router, routes, abilitiesSet)
   router.beforeEach(registerAuthorizer(redirect, abilitiesSet))
+  return addRoutes(router, routes, abilitiesSet)
 }
 
 export function reset(router: VueRouter) {
