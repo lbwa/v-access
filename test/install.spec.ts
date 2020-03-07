@@ -15,11 +15,20 @@ describe('Install', () => {
       addRoutes: jest.fn()
     }
     router = Object.create(routerPrototype)
+    router.matcher = {
+      tag: 'should be deleted'
+    }
   })
 
   it('Should reset function throws a error before init calling', () => {
     expect(() => {
       reset(router)
+    }).toThrowError()
+  })
+
+  it('Should reset function throws a error without vue-router instance', () => {
+    expect(() => {
+      reset(undefined as any)
     }).toThrowError()
   })
 
@@ -56,12 +65,6 @@ describe('Install', () => {
     }).toThrowError()
   })
 
-  it('Should reset function throws a error without vue-router instance', () => {
-    expect(() => {
-      reset(undefined as any)
-    }).toThrowError()
-  })
-
   it('Should init function works with vue-router', () => {
     init({
       vm: router,
@@ -92,14 +95,6 @@ describe('Install', () => {
   })
 
   it('Should reset function works', () => {
-    router.matcher = {
-      tag: 'should be deleted'
-    }
-    init({
-      vm: router,
-      abilities: [],
-      redirect: '/forbidden'
-    })
     reset(router)
     expect(routerPrototype.constructor).toBeCalledTimes(1)
     expect(router.matcher).toBeUndefined()

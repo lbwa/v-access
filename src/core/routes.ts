@@ -24,8 +24,12 @@ export function addRoutes(
   router: VueRouter,
   routes: RouteWithAbility[],
   abilitiesSet: AbilitiesSet
-) {
-  if (isRoutesAdded) return
+): RouteWithAbility[] {
+  invariant(
+    !isRoutesAdded,
+    'Should call `reset` function first when you are ready to add new routes'
+  )
+  invariant(Array.isArray(routes), 'Routes must be a RouteConfig list.')
 
   routerOptions = router.options
   const createRoutes = (routes: RouteWithAbility[]) =>
@@ -43,11 +47,10 @@ export function addRoutes(
       return list
     }, [])
 
-  invariant(Array.isArray(routes), 'Routes must be a RouteConfig list.')
-
   const privilegeRoutes = createRoutes(routes)
   router.addRoutes(privilegeRoutes)
   isRoutesAdded = true
+  return privilegeRoutes
 }
 
 export function removeRoutes(router: VueRouter) {
