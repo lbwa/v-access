@@ -1,7 +1,12 @@
 import Vue from 'vue'
-import { addRoutes, removeRoutes, registerAuthorizer } from '../src/core/routes'
+import {
+  addRoutes,
+  removeRoutes,
+  registerAuthorizer,
+  RouteWithAbility
+} from '../src/core/routes'
 import { AbilitiesSet } from '../src/core/ability'
-import { NavigationGuard, Location, Route } from 'vue-router'
+import { NavigationGuard, Route } from 'vue-router'
 
 describe('routes', () => {
   describe('addRoutes', () => {
@@ -18,6 +23,9 @@ describe('routes', () => {
 
     beforeEach(() => {
       router.addRoutes = jest.fn()
+      router.options = {
+        routes: [{}, {}]
+      }
     })
 
     it('Should add routes', () => {
@@ -109,8 +117,9 @@ describe('routes', () => {
         }
       ]
 
-      addRoutes(router, presetRoutes, abilitiesSet)
+      const allRoutes = addRoutes(router, presetRoutes, abilitiesSet)
       expect(router.addRoutes.mock.calls[0][0]).toEqual(expectedRoutes)
+      expect(allRoutes.length).toEqual(expectedRoutes.length)
     })
 
     it('Should remove routes and reset flag', () => {
@@ -119,9 +128,17 @@ describe('routes', () => {
     })
 
     it('Should add routes only once', () => {
-      addRoutes(router, [], abilitiesSet)
-      addRoutes(router, [], abilitiesSet)
+      const fakeRoute = {} as RouteWithAbility
+      const firstAddition = addRoutes(
+        router,
+        [fakeRoute, fakeRoute],
+        abilitiesSet
+      )
       expect(router.addRoutes).toBeCalledTimes(1)
+      expect(firstAddition.length).toEqual(2)
+      expect(() => {
+        addRoutes(router, [fakeRoute, fakeRoute], abilitiesSet)
+      }).toThrowError('Should call `reset` function first')
       removeRoutes(router)
     })
 
