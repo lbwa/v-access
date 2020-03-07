@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0](https://github.com/lbwa/v-access/compare/v2.0.2...v2.1.0) (2020-03-07)
+
+
+### Features
+
+* **routes:** init function will return all valid private routes ([0228b10](https://github.com/lbwa/v-access/commit/0228b107b7c936054d629e9ddf8bfccb54190852))
+
+
+### Bug Fixes
+
+* **dep:** migrate $$auth declaration to entry point ([73e8f54](https://github.com/lbwa/v-access/commit/73e8f544e1fba0cea59469fefec21389aadd4e22))
+
 ### [2.0.2](https://github.com/lbwa/v-access/compare/v2.0.1...v2.0.2) (2020-02-29)
 
 
