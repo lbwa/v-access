@@ -55,14 +55,19 @@ export default {
   }
 }
 
-interface InitOptions {
+interface InitOptions<R extends RouteWithAbility> {
   vm: Vue | VueRouter
   abilities: Ability[]
   redirect: string
-  routes?: RouteWithAbility[]
+  routes?: R[]
 }
 
-export function init({ vm, abilities, redirect, routes = [] }: InitOptions) {
+export function init<R extends RouteWithAbility>({
+  vm,
+  abilities,
+  redirect,
+  routes = []
+}: InitOptions<R>) {
   invariant(vm, 'MUST has a Vue/VueRouter instance as vm.')
   invariant(
     abilitiesSet,
