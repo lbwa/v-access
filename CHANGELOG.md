@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [2.1.1](https://github.com/lbwa/v-access/compare/v2.1.0...v2.1.1) (2020-04-04)
+
+
+### Bug Fixes
+
+* add InitOptions['routes'] type constraint ([918e290](https://github.com/lbwa/v-access/commit/918e2904033b67aa2a220fa049dfd13ff550e2b6))
+
 ## [2.1.0](https://github.com/lbwa/v-access/compare/v2.0.2...v2.1.0) (2020-03-07)
 
 
